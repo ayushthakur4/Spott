@@ -1,9 +1,9 @@
 import { useState, useContext } from 'react';
-import { ChevronUp, ChevronDown, MessageSquare, Share2, MapPin, Clock } from 'lucide-react';
+import { ChevronUp, ChevronDown, MessageSquare, Share2, MapPin, Clock, Trash2 } from 'lucide-react';
 import AuthContext from '../context/AuthContext';
 import api from '../services/api';
 
-const PostCard = ({ post, onVote, onComment }) => {
+const PostCard = ({ post, onVote, onComment, onDelete }) => {
   const { user } = useContext(AuthContext);
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState('');
@@ -47,6 +47,17 @@ const PostCard = ({ post, onVote, onComment }) => {
       console.error(error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm("Are you sure you want to delete this post?")) return;
+    try {
+      await api.delete(`/posts/${post._id}`);
+      if (onDelete) onDelete(post._id);
+    } catch (error) {
+      console.error(error);
+      alert("Error deleting post");
     }
   };
 
@@ -101,12 +112,23 @@ const PostCard = ({ post, onVote, onComment }) => {
                 </div>
               </div>
             </div>
-            {post.expiresAt && (
-              <div className="flex items-center gap-1 text-xs font-medium text-amber-600 bg-amber-50 px-2 py-1 rounded-lg">
-                <Clock className="w-3 h-3" />
-                <span>Exp: {new Date(post.expiresAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-              </div>
-            )}
+            <div className="flex items-center gap-2">
+              {post.expiresAt && (
+                <div className="flex items-center gap-1 text-xs font-medium text-amber-600 bg-amber-50 px-2 py-1 rounded-lg">
+                  <Clock className="w-3 h-3" />
+                  <span>Exp: {new Date(post.expiresAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                </div>
+              )}
+              {user && user._id === post.user?._id && (
+                <button 
+                  onClick={handleDelete} 
+                  className="text-red-500 hover:text-red-600 p-1.5 rounded-md hover:bg-red-50 transition"
+                  title="Delete Post"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Body */}

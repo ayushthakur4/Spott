@@ -38,6 +38,10 @@ const Home = () => {
     setPosts(posts.map(post => post._id === postId ? { ...post, comments: updatedComments } : post));
   };
 
+  const handleDeletePost = (postId) => {
+    setPosts(posts.filter(post => post._id !== postId));
+  };
+
   const handleCreatePrompt = () => {
     if (user) {
       setIsModalOpen(true);
@@ -79,6 +83,7 @@ const Home = () => {
               post={post} 
               onVote={handleVoteUpdate} 
               onComment={handleCommentUpdate} 
+              onDelete={handleDeletePost}
             />
           ))}
           {posts.length === 0 && (

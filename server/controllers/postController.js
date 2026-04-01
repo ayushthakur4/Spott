@@ -1,4 +1,5 @@
 const Post = require('../models/Post');
+const { cloudinary } = require('../config/cloudinary');
 
 // Get all posts for feed
 const getPosts = async (req, res) => {
@@ -144,10 +145,41 @@ const addComment = async (req, res) => {
   }
 };
 
+// Delete Post
+const deletePost = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json({ message: 'Post not found' });
+
+    // Check user ownership
+    if (post.user.toString() !== req.user.id) {
+      return res.status(401).json({ message: 'User not authorized to delete this post' });
+    }
+
+    // Delete image from Cloudinary if it exists
+    if (post.image) {
+      try {
+        const splits = post.image.split('/');
+        const folderAndFile = splits.slice(-2).join('/'); // e.g., 'road-alert-hangout/filename.jpg'
+        const publicId = folderAndFile.split('.')[0]; // e.g., 'road-alert-hangout/filename'
+        await cloudinary.uploader.destroy(publicId);
+      } catch (err) {
+        console.error('Error deleting image from Cloudinary:', err);
+      }
+    }
+
+    await post.deleteOne();
+    res.status(200).json({ id: req.params.id });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getPosts,
   createPost,
   upvotePost,
   downvotePost,
   addComment,
+  deletePost,
 };

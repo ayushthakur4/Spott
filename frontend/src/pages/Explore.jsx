@@ -70,6 +70,7 @@ const Explore = () => {
               post={post} 
               onVote={(updated) => setPosts(posts.map(p => p._id === updated._id ? { ...p, upvotes: updated.upvotes, downvotes: updated.downvotes } : p))}
               onComment={(id, updated) => setPosts(posts.map(p => p._id === id ? { ...p, comments: updated } : p))}
+              onDelete={(postId) => setPosts(posts.filter(p => p._id !== postId))}
             />
           ))}
           {(!loading && filteredPosts.length === 0) && (
