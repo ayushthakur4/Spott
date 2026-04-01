@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Compass, Map, LogIn } from 'lucide-react';
+import { Home, Compass, User } from 'lucide-react';
 import { useContext } from 'react';
 import AuthContext from '../context/AuthContext';
 
@@ -10,6 +10,7 @@ const Sidebar = () => {
   const navLinks = [
     { name: 'Home Feed', icon: Home, path: '/' },
     { name: 'Explore', icon: Compass, path: '/explore' },
+    ...(user ? [{ name: 'My Profile', icon: User, path: `/profile/${user._id}` }] : []),
   ];
 
   return (

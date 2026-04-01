@@ -28,7 +28,7 @@ const Navbar = () => {
       <div className="flex items-center gap-4">
         {user ? (
           <div className="flex items-center gap-4">
-            <Link to="/profile" className="flex items-center gap-2 hover:bg-slate-100 p-1 pr-3 rounded-full transition">
+            <Link to={`/profile/${user._id}`} className="flex items-center gap-2 hover:bg-slate-100 p-1 pr-3 rounded-full transition">
               <img src={user.profileImage} alt="Profile" className="w-8 h-8 rounded-full border border-slate-200 object-cover" />
               <span className="text-sm font-medium text-slate-700 hidden sm:block">{user.name}</span>
             </Link>

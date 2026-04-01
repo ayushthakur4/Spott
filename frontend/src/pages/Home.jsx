@@ -16,12 +16,21 @@ const Home = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchPosts();
+    // Try to get user geolocation for local feed
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => fetchPosts(pos.coords.latitude, pos.coords.longitude),
+        () => fetchPosts() // fallback: show all posts
+      );
+    } else {
+      fetchPosts();
+    }
   }, []);
 
-  const fetchPosts = async () => {
+  const fetchPosts = async (lat, lng) => {
     try {
-      const { data } = await api.get('/posts');
+      const params = lat && lng ? `?lat=${lat}&lng=${lng}` : '';
+      const { data } = await api.get(`/posts${params}`);
       setPosts(data);
       setLoading(false);
     } catch (err) {

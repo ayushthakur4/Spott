@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Explore from './pages/Explore';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Profile from './pages/Profile';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 
@@ -27,6 +28,7 @@ function App() {
                 <Route path="/explore" element={<Explore />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
+                <Route path="/profile/:id" element={<Profile />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </main>
