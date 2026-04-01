@@ -1,0 +1,12 @@
+{
+  "name": "spott",
+  "version": "1.0.0",
+  "description": "Root package for deployment on Railway",
+  "scripts": {
+    "build": "npm install --prefix frontend && npm run build --prefix frontend && npm install --prefix server",
+    "start": "npm start --prefix server"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
