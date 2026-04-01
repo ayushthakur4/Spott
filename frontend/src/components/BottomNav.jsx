@@ -3,10 +3,6 @@ import { Home, Compass, User, LogIn } from 'lucide-react';
 import { useContext } from 'react';
 import AuthContext from '../context/AuthContext';
 
-/**
- * BottomNav — Mobile-only bottom tab bar.
- * Hidden on md and above (desktop shows the Sidebar instead).
- */
 const BottomNav = () => {
   const location = useLocation();
   const { user } = useContext(AuthContext);
@@ -20,27 +16,27 @@ const BottomNav = () => {
   ];
 
   return (
-    <nav className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-white border-t border-slate-200 shadow-[0_-2px_12px_rgba(0,0,0,0.06)]">
-      <div className="flex items-stretch h-16">
+    /* Floating pill nav — only on mobile */
+    <nav className="md:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-xs">
+      <div className="glass border border-white/60 rounded-3xl shadow-soft px-2 py-1 flex items-center justify-around pb-safe">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = location.pathname === tab.path;
+
           return (
             <Link
-              key={tab.name}
+              key={tab.path}
               to={tab.path}
-              className={`flex-1 flex flex-col items-center justify-center gap-1 text-[11px] font-semibold tracking-wide transition-colors ${
-                isActive ? 'text-primary-600' : 'text-slate-400 hover:text-slate-700'
+              className={`relative flex flex-col items-center justify-center gap-1 px-5 py-2 rounded-2xl transition-all duration-250 btn-press ${
+                isActive
+                  ? 'text-white gradient-brand shadow-glow-sm scale-105'
+                  : 'text-slate-500 hover:text-primary-500'
               }`}
             >
-              <Icon
-                className={`w-5 h-5 transition-transform ${isActive ? 'scale-110' : ''}`}
-                strokeWidth={isActive ? 2.5 : 1.8}
-              />
-              <span>{tab.name}</span>
-              {isActive && (
-                <span className="absolute bottom-0 w-8 h-0.5 rounded-full bg-primary-600" />
-              )}
+              <Icon className="w-5 h-5" strokeWidth={isActive ? 2.5 : 1.8} />
+              <span className={`text-[10px] font-bold tracking-wide ${isActive ? 'text-white' : ''}`}>
+                {tab.name}
+              </span>
             </Link>
           );
         })}

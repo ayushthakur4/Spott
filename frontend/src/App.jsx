@@ -13,29 +13,29 @@ function App() {
   return (
     <Router>
       <AuthProvider>
-        <div className="flex flex-col h-screen bg-slate-50 overflow-hidden">
+        <div className="flex flex-col h-screen overflow-hidden" style={{ background: '#f0f6ff' }}>
           <Navbar />
 
           <div className="flex flex-1 overflow-hidden">
-            {/* Desktop Sidebar — hidden on mobile */}
-            <div className="hidden md:block w-64 border-r border-slate-200 bg-white shadow-soft z-20 shrink-0">
+            {/* Desktop Sidebar */}
+            <aside className="hidden md:flex flex-col w-60 lg:w-64 shrink-0 border-r border-slate-200/70 bg-white/80 backdrop-blur-sm z-20">
               <Sidebar />
-            </div>
+            </aside>
 
-            {/* Main Content Area */}
-            <main className="flex-1 relative overflow-y-auto no-scrollbar pb-16 md:pb-0">
+            {/* Main scroll area */}
+            <main className="flex-1 relative overflow-y-auto no-scrollbar pb-24 md:pb-4">
               <Routes>
-                <Route path="/"              element={<Home />} />
-                <Route path="/explore"       element={<Explore />} />
-                <Route path="/login"         element={<Login />} />
-                <Route path="/register"      element={<Register />} />
-                <Route path="/profile/:id"   element={<Profile />} />
-                <Route path="*"             element={<Navigate to="/" replace />} />
+                <Route path="/"            element={<Home />} />
+                <Route path="/explore"     element={<Explore />} />
+                <Route path="/login"       element={<Login />} />
+                <Route path="/register"    element={<Register />} />
+                <Route path="/profile/:id" element={<Profile />} />
+                <Route path="*"            element={<Navigate to="/" replace />} />
               </Routes>
             </main>
           </div>
 
-          {/* Mobile Bottom Tab Bar — hidden on md+ */}
+          {/* Mobile floating bottom nav */}
           <BottomNav />
         </div>
       </AuthProvider>

@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
 import PostCard from '../components/PostCard';
-import { Compass, Flame, Leaf, Coffee, MapPin, Heart, Shuffle } from 'lucide-react';
+import { Compass, Flame, Leaf, Coffee, MapPin, Heart, Shuffle, Loader2 } from 'lucide-react';
 import api from '../services/api';
 
 const categories = [
-  { id: 'all',       name: 'All',        icon: Flame,    match: '' },
-  { id: 'viewpoint', name: 'Viewpoints', icon: Compass,  match: 'Viewpoint' },
-  { id: 'picnic',    name: 'Picnic',     icon: Leaf,     match: 'Picnic' },
-  { id: 'couple',    name: 'Couple',     icon: Heart,    match: 'Couple Safe' },
-  { id: 'cafe',      name: 'Cafes',      icon: Coffee,   match: 'Cafe' },
-  { id: 'random',    name: 'Random',     icon: Shuffle,  match: 'Random' },
+  { id: 'all',       name: 'All',        icon: '🔥', match: '' },
+  { id: 'viewpoint', name: 'Viewpoints', icon: '🌄', match: 'Viewpoint' },
+  { id: 'picnic',    name: 'Picnic',     icon: '🌿', match: 'Picnic' },
+  { id: 'couple',    name: 'Couple',     icon: '💕', match: 'Couple Safe' },
+  { id: 'cafe',      name: 'Cafés',      icon: '☕', match: 'Cafe' },
+  { id: 'random',    name: 'Random',     icon: '🎲', match: 'Random' },
 ];
 
 const Explore = () => {
@@ -32,63 +32,85 @@ const Explore = () => {
 
   const filteredPosts = activeTab === 'all'
     ? posts
-    : posts.filter(post => post.type === categories.find(c => c.id === activeTab)?.match);
+    : posts.filter(p => p.type === categories.find(c => c.id === activeTab)?.match);
 
   return (
-    <div className="flex h-full">
-      <div className="flex-1 max-w-3xl w-full px-3 sm:px-4 lg:px-8 py-4 sm:py-6 overflow-y-auto no-scrollbar">
+    <div className="flex h-full animate-fade-in">
+      <div className="flex-1 max-w-3xl w-full px-3 sm:px-5 lg:px-7 py-5 overflow-y-auto no-scrollbar">
 
-        {/* Category Pills — horizontally scrollable on mobile */}
-        <div className="mb-5 flex overflow-x-auto no-scrollbar pb-1 gap-2 snap-x -mx-1 px-1">
+        {/* Hero Banner */}
+        <div className="relative gradient-brand rounded-3xl p-5 sm:p-7 text-white mb-6 overflow-hidden shadow-glow-sm">
+          {/* Decorative orbs */}
+          <div className="absolute -top-8 -right-8 w-32 h-32 bg-white/15 rounded-full blur-2xl pointer-events-none" />
+          <div className="absolute -bottom-6 left-12 w-24 h-24 bg-white/10 rounded-full blur-xl pointer-events-none" />
+
+          <div className="relative z-10">
+            <span className="chip bg-white/20 text-white mb-3">✦ Discover</span>
+            <h1 className="font-display font-bold text-2xl sm:text-3xl mb-1.5 tracking-tight">
+              Explore your city 🧭
+            </h1>
+            <p className="text-primary-100/90 text-sm sm:text-base max-w-md leading-relaxed">
+              Hangout spots, viewpoints, cafés & more — curated by the community, for you.
+            </p>
+          </div>
+        </div>
+
+        {/* Category pills */}
+        <div className="flex overflow-x-auto no-scrollbar gap-2 pb-1 mb-4 -mx-1 px-1 snap-x">
           {categories.map((cat) => {
-            const Icon = cat.icon;
             const isActive = activeTab === cat.id;
             return (
               <button
                 key={cat.id}
                 onClick={() => setActiveTab(cat.id)}
-                className={`flex items-center gap-1.5 whitespace-nowrap px-3 sm:px-4 py-2 rounded-xl transition font-semibold text-sm snap-start shrink-0 ${
+                className={`flex items-center gap-1.5 whitespace-nowrap px-4 py-2 rounded-xl font-bold text-sm snap-start shrink-0 btn-press transition-all duration-200 ${
                   isActive
-                    ? 'bg-primary-600 text-white shadow-md'
-                    : 'bg-white text-slate-500 border border-slate-200 hover:bg-slate-50'
+                    ? 'gradient-brand text-white shadow-glow-sm scale-[1.03]'
+                    : 'bg-white text-slate-600 border border-slate-200/80 hover:border-primary-300 hover:text-primary-600 hover:bg-primary-50 shadow-card'
                 }`}
               >
-                <Icon className="w-4 h-4" />
+                <span>{cat.icon}</span>
                 {cat.name}
               </button>
             );
           })}
         </div>
 
-        {/* Hero Banner */}
-        <div className="bg-gradient-to-r from-primary-600 to-indigo-600 rounded-2xl sm:rounded-3xl p-5 sm:p-6 text-white mb-6 sm:mb-8 shadow-md">
-          <h2 className="text-xl sm:text-2xl font-bold mb-1">Discover New Places</h2>
-          <p className="text-primary-100 font-medium opacity-90 text-sm sm:text-base">
-            Find the best hangout spots around you recommended by the community.
+        {/* Post count */}
+        {!loading && (
+          <p className="text-xs font-semibold text-slate-400 mb-4 flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full gradient-brand inline-block" />
+            {filteredPosts.length} {filteredPosts.length === 1 ? 'spot' : 'spots'} found
           </p>
-        </div>
+        )}
 
-        {/* Post List */}
-        <div className="space-y-4 sm:space-y-6 pb-4">
-          {filteredPosts.map(post => (
-            <PostCard
-              key={post._id}
-              post={post}
-              onVote={(updated) => setPosts(posts.map(p => p._id === updated._id ? { ...p, upvotes: updated.upvotes, downvotes: updated.downvotes } : p))}
-              onComment={(id, updated) => setPosts(posts.map(p => p._id === id ? { ...p, comments: updated } : p))}
-              onDelete={(postId) => setPosts(posts.filter(p => p._id !== postId))}
-            />
-          ))}
-          {!loading && filteredPosts.length === 0 && (
-            <div className="text-center py-10">
-              <MapPin className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-              <h3 className="text-lg font-bold text-slate-800">No places found</h3>
-              <p className="text-slate-500 font-medium text-sm">
-                Be the first to share a {activeTab !== 'all' ? categories.find(c => c.id === activeTab)?.name : 'spot'}!
-              </p>
-            </div>
-          )}
-        </div>
+        {/* Posts / loading / empty */}
+        {loading ? (
+          <div className="flex justify-center py-24">
+            <Loader2 className="w-8 h-8 animate-spin text-primary-400" />
+          </div>
+        ) : filteredPosts.length === 0 ? (
+          <div className="text-center py-20 animate-fade-in">
+            <div className="text-5xl mb-4">{categories.find(c => c.id === activeTab)?.icon || '🗺'}</div>
+            <p className="font-display font-bold text-lg text-slate-700 mb-1">No spots yet</p>
+            <p className="text-sm text-slate-400">
+              Be the first to share a {activeTab !== 'all' ? categories.find(c => c.id === activeTab)?.name?.toLowerCase() : 'spot'}!
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-4 pb-4">
+            {filteredPosts.map((post, i) => (
+              <div key={post._id} className="animate-fade-in" style={{ animationDelay: `${i * 0.04}s` }}>
+                <PostCard
+                  post={post}
+                  onVote={(u) => setPosts(posts.map(p => p._id === u._id ? { ...p, upvotes: u.upvotes, downvotes: u.downvotes } : p))}
+                  onComment={(id, c) => setPosts(posts.map(p => p._id === id ? { ...p, comments: c } : p))}
+                  onDelete={(id) => setPosts(posts.filter(p => p._id !== id))}
+                />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

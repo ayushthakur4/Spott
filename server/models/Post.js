@@ -21,6 +21,10 @@ const postSchema = new mongoose.Schema(
         required: true,
       },
     },
+    locationName: {
+      type: String,
+      default: '',
+    },
     geo: {
       type: {
         type: String,
@@ -64,16 +68,9 @@ const postSchema = new mongoose.Schema(
         ref: 'User',
       },
     ],
-    expiresAt: {
-      type: Date,
-      default: undefined,
-    },
   },
   { timestamps: true }
 );
-
-// TTL index on expiresAt
-postSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
 // 2dsphere index on geo coordinates for spatial feeds
 postSchema.index({ geo: '2dsphere' });

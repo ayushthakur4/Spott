@@ -36,7 +36,7 @@ const getPosts = async (req, res) => {
 // Create new post
 const createPost = async (req, res) => {
   try {
-    const { lat, lng, type, description } = req.body;
+    const { lat, lng, type, description, locationName } = req.body;
     let imageUrl = '';
 
     if (req.file) {
@@ -49,15 +49,6 @@ const createPost = async (req, res) => {
       return res.status(400).json({ message: 'Missing required fields' });
     }
 
-    let expiresAt = undefined;
-
-    // Set auto-expiry for specific alerts
-    if (type === 'Police Alert') {
-      expiresAt = new Date(Date.now() + 2 * 60 * 60 * 1000); // 2 hours
-    } else if (type === 'Accident') {
-      expiresAt = new Date(Date.now() + 4 * 60 * 60 * 1000); // 4 hours
-    }
-
     const post = await Post.create({
       user: req.user.id,
       image: imageUrl,
@@ -65,13 +56,13 @@ const createPost = async (req, res) => {
         lat: Number(lat),
         lng: Number(lng),
       },
+      locationName: locationName || '',
       geo: {
         type: 'Point',
         coordinates: [Number(lng), Number(lat)]
       },
       type,
       description,
-      expiresAt,
     });
 
     const populatedPost = await Post.findById(post._id)

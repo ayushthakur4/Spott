@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Compass, User } from 'lucide-react';
+import { Home, Compass, User, Zap } from 'lucide-react';
 import { useContext } from 'react';
 import AuthContext from '../context/AuthContext';
 import logo from '../assets/logo.png';
@@ -9,62 +9,77 @@ const Sidebar = () => {
   const { user } = useContext(AuthContext);
 
   const navLinks = [
-    { name: 'Home Feed', icon: Home,    path: '/' },
-    { name: 'Explore',   icon: Compass, path: '/explore' },
-    ...(user ? [{ name: 'My Profile', icon: User, path: `/profile/${user._id}` }] : []),
+    { name: 'Home',     icon: Home,    path: '/',        emoji: '🏠' },
+    { name: 'Explore',  icon: Compass, path: '/explore', emoji: '🧭' },
+    ...(user ? [{ name: 'Profile', icon: User, path: `/profile/${user._id}`, emoji: '👤' }] : []),
   ];
 
+  const isActive = (path) => location.pathname === path;
+
   return (
-    <div className="h-full py-6 px-4 flex flex-col justify-between">
-      <div className="space-y-4">
-        {/* Logo */}
-        <Link to="/" className="flex items-center justify-center gap-2 mb-2 hover:opacity-80 transition">
-          <img src={logo} alt="Spott" className="h-10 w-auto object-contain" />
-          <span className="text-lg font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-primary-700 to-primary-500 tracking-tight">
-            Spott
-          </span>
-        </Link>
-        <div className="space-y-1">
-          {navLinks.map((link) => {
-            const Icon = link.icon;
-            const isActive = location.pathname === link.path;
+    <div className="flex flex-col h-full py-4 px-3 overflow-y-auto no-scrollbar">
 
-            return (
-              <Link
-                key={link.name}
-                to={link.path}
-                className={`flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 ${
-                  isActive
-                    ? 'bg-primary-50 text-primary-700 font-semibold shadow-sm'
-                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-                }`}
-              >
-                <Icon className={`w-5 h-5 ${isActive ? 'text-primary-600' : 'text-slate-500'}`} />
-                <span>{link.name}</span>
-              </Link>
-            );
-          })}
+      {/* Brand in sidebar */}
+      <Link to="/" className="flex items-center gap-2.5 px-2 mb-6 group btn-press">
+        <div className="relative">
+          <div className="absolute inset-0 bg-primary-400/25 blur-md rounded-full scale-150 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <img src={logo} alt="Spott" className="relative h-8 w-auto object-contain z-10" />
         </div>
-      </div>
+        <span className="font-display font-bold text-lg text-gradient tracking-tight">Spott</span>
+      </Link>
 
-      <div className="space-y-4">
-        {!user && (
-          <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
-            <p className="text-sm text-slate-600 text-center font-medium">Join the Spott community</p>
-            <p className="text-xs text-slate-500 text-center mb-3">Post alerts, comment, and save locations.</p>
-            <Link to="/register" className="w-full block text-center bg-primary-600 text-white rounded-xl py-2 font-medium hover:bg-primary-700 transition">
-              Sign Up
+      {/* Section label */}
+      <p className="text-[10px] uppercase tracking-widest font-bold text-slate-400 px-3 mb-2">Navigation</p>
+
+      {/* Nav links */}
+      <nav className="space-y-1 flex-1">
+        {navLinks.map((link) => {
+          const Icon = link.icon;
+          const active = isActive(link.path);
+
+          return (
+            <Link
+              key={link.path}
+              to={link.path}
+              className={`relative flex items-center gap-3 px-3 py-2.5 rounded-2xl font-semibold text-sm transition-all duration-200 group ${
+                active
+                  ? 'text-white gradient-brand shadow-glow-sm'
+                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+              }`}
+            >
+              <div className={`flex items-center justify-center w-7 h-7 rounded-xl transition-all duration-200 ${
+                active ? 'bg-white/20' : 'bg-slate-100 group-hover:bg-slate-200'
+              }`}>
+                <Icon className="w-4 h-4" />
+              </div>
+              <span>{link.name}</span>
+              {active && (
+                <span className="ml-auto text-white/70 text-xs">●</span>
+              )}
             </Link>
-            <Link to="/login" className="w-full block text-center bg-white text-slate-700 border border-slate-300 rounded-xl py-2 font-medium hover:bg-slate-50 transition">
-              Log In
+          );
+        })}
+      </nav>
+
+      {/* Bottom CTA / copyright */}
+      <div className="mt-6 space-y-4">
+        {!user && (
+          <div className="relative overflow-hidden rounded-2xl p-4 gradient-brand text-white">
+            <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-8 translate-x-8 blur-xl" />
+            <Zap className="w-5 h-5 mb-2 opacity-80" />
+            <p className="font-display font-bold text-sm leading-snug mb-1">Join Spott</p>
+            <p className="text-xs text-white/75 mb-3 leading-relaxed">Report alerts & discover hidden spots near you.</p>
+            <Link
+              to="/register"
+              className="block w-full text-center bg-white text-primary-600 font-bold text-xs py-2 rounded-xl hover:bg-primary-50 transition btn-press"
+            >
+              Get Started Free →
             </Link>
           </div>
         )}
 
-        {/* Copyright */}
-        <p className="text-[11px] text-slate-400 text-center leading-relaxed px-2">
-          © {new Date().getFullYear()} <span className="font-semibold text-slate-500">Ayush Thakur</span><br />
-          All rights reserved.
+        <p className="text-[10px] text-slate-400 text-center leading-loose px-2">
+          © {new Date().getFullYear()} <span className="font-semibold text-slate-500">Ayush Thakur</span>
         </p>
       </div>
     </div>
@@ -72,4 +87,3 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
-

@@ -4,191 +4,179 @@ import { Link } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
 import api from '../services/api';
 
+const TAG_COLORS = {
+  'Police Alert': 'bg-blue-50   text-blue-600   border-blue-200',
+  'Accident':     'bg-red-50    text-red-600    border-red-200',
+  'Viewpoint':    'bg-emerald-50 text-emerald-600 border-emerald-200',
+  'Picnic':       'bg-amber-50  text-amber-600  border-amber-200',
+  'Couple Safe':  'bg-pink-50   text-pink-600   border-pink-200',
+  'Cafe':         'bg-orange-50 text-orange-600 border-orange-200',
+  'Random':       'bg-violet-50 text-violet-600 border-violet-200',
+};
+
 const PostCard = ({ post, onVote, onComment, onDelete }) => {
   const { user } = useContext(AuthContext);
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [reported, setReported] = useState(false);
   const [saved, setSaved] = useState(
-    user && user.savedPosts ? user.savedPosts.includes(post._id) : false
+    user?.savedPosts ? user.savedPosts.includes(post._id) : false
   );
 
-  const isUpvoted = user ? post.upvotes.includes(user._id) : false;
+  const isUpvoted   = user ? post.upvotes.includes(user._id)   : false;
   const isDownvoted = user ? post.downvotes.includes(user._id) : false;
-  const voteCount = post.upvotes.length - post.downvotes.length;
-  const isOwner = user && user._id === post.user?._id;
+  const voteCount   = post.upvotes.length - post.downvotes.length;
+  const isOwner     = user?._id === post.user?._id;
+  const tagColor    = TAG_COLORS[post.type] || 'bg-slate-50 text-slate-600 border-slate-200';
 
   const handleUpvote = async () => {
     if (!user) return alert('Please log in to vote');
-    try {
-      const res = await api.put(`/posts/${post._id}/upvote`);
-      onVote(res.data);
-    } catch (error) { console.error(error); }
+    try { const r = await api.put(`/posts/${post._id}/upvote`); onVote(r.data); }
+    catch (e) { console.error(e); }
   };
 
   const handleDownvote = async () => {
     if (!user) return alert('Please log in to vote');
-    try {
-      const res = await api.put(`/posts/${post._id}/downvote`);
-      onVote(res.data);
-    } catch (error) { console.error(error); }
+    try { const r = await api.put(`/posts/${post._id}/downvote`); onVote(r.data); }
+    catch (e) { console.error(e); }
   };
 
   const handleAddComment = async (e) => {
     e.preventDefault();
-    if (!user) return alert('Please log in to comment');
+    if (!user)              return alert('Please log in to comment');
     if (!commentText.trim()) return;
-    setLoading(true);
+    setSubmitting(true);
     try {
-      const res = await api.post(`/posts/${post._id}/comments`, { text: commentText });
-      onComment(post._id, res.data);
+      const r = await api.post(`/posts/${post._id}/comments`, { text: commentText });
+      onComment(post._id, r.data);
       setCommentText('');
-    } catch (error) { console.error(error); }
-    finally { setLoading(false); }
+    } catch (e) { console.error(e); }
+    finally { setSubmitting(false); }
   };
 
   const handleDelete = async () => {
-    if (!window.confirm('Are you sure you want to delete this post?')) return;
-    try {
-      await api.delete(`/posts/${post._id}`);
-      if (onDelete) onDelete(post._id);
-    } catch (error) {
-      console.error(error);
-      alert('Error deleting post');
-    }
+    if (!window.confirm('Delete this post?')) return;
+    try { await api.delete(`/posts/${post._id}`); onDelete?.(post._id); }
+    catch (e) { alert('Error deleting post'); }
   };
 
   const handleSave = async () => {
     if (!user) return alert('Please log in to save posts');
     try {
-      const res = await api.post(`/users/save/${post._id}`);
-      const nowSaved = res.data.includes(post._id);
+      const r = await api.post(`/users/save/${post._id}`);
+      const nowSaved = r.data.includes(post._id);
       setSaved(nowSaved);
-      // Update localStorage savedPosts so state stays in sync
-      const storedUser = JSON.parse(localStorage.getItem('user'));
-      if (storedUser) {
-        storedUser.savedPosts = res.data;
-        localStorage.setItem('user', JSON.stringify(storedUser));
-      }
-    } catch (error) { console.error(error); }
+      const stored = JSON.parse(localStorage.getItem('user'));
+      if (stored) { stored.savedPosts = r.data; localStorage.setItem('user', JSON.stringify(stored)); }
+    } catch (e) { console.error(e); }
   };
 
   const handleShare = async () => {
-    const postUrl = `${window.location.origin}/post/${post._id}`;
+    const url = `${window.location.origin}/post/${post._id}`;
     if (navigator.share) {
-      try {
-        await navigator.share({ title: `Spott – ${post.type}`, text: post.description, url: postUrl });
-      } catch (_) {}
+      try { await navigator.share({ title: `Spott – ${post.type}`, text: post.description, url }); }
+      catch (_) {}
     } else {
-      navigator.clipboard.writeText(postUrl);
-      alert('Link copied to clipboard!');
+      navigator.clipboard.writeText(url);
+      alert('Link copied!');
     }
   };
 
   const handleReport = async () => {
-    if (!user) return alert('Please log in to report posts');
+    if (!user) return alert('Please log in to report');
     if (reported) return;
-    if (!window.confirm('Report this post as fake or inappropriate?')) return;
-    try {
-      await api.post(`/posts/${post._id}/report`);
-      setReported(true);
-    } catch (error) { console.error(error); }
-  };
-
-  const getCategoryColor = (type) => {
-    switch (type) {
-      case 'Police Alert': return 'text-blue-600 bg-blue-50 border-blue-200';
-      case 'Accident':     return 'text-red-600 bg-red-50 border-red-200';
-      case 'Viewpoint':    return 'text-emerald-600 bg-emerald-50 border-emerald-200';
-      case 'Picnic':       return 'text-amber-600 bg-amber-50 border-amber-200';
-      case 'Couple Safe':  return 'text-pink-600 bg-pink-50 border-pink-200';
-      case 'Cafe':         return 'text-orange-600 bg-orange-50 border-orange-200';
-      case 'Random':       return 'text-violet-600 bg-violet-50 border-violet-200';
-      default:             return 'text-slate-600 bg-slate-50 border-slate-200';
-    }
+    if (!window.confirm('Report this post?')) return;
+    try { await api.post(`/posts/${post._id}/report`); setReported(true); }
+    catch (e) { console.error(e); }
   };
 
   return (
-    <div className="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition-shadow duration-300">
+    <article className="bg-white rounded-3xl shadow-card border border-slate-200/70 overflow-hidden hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-300">
       <div className="flex">
-        {/* Vote Sidebar */}
-        <div className="w-12 sm:w-16 bg-slate-50/50 p-2 sm:p-4 flex flex-col items-center gap-1 border-r border-slate-100">
+
+        {/* ── Vote sidebar ── */}
+        <div className="w-11 sm:w-13 shrink-0 flex flex-col items-center gap-0.5 py-4 px-2 border-r border-slate-100 bg-slate-50/60">
           <button
             onClick={handleUpvote}
-            className={`p-1.5 rounded-full hover:bg-slate-200 transition ${isUpvoted ? 'text-orange-500' : 'text-slate-400'}`}
+            className={`p-1.5 rounded-xl transition-all duration-200 btn-press ${
+              isUpvoted
+                ? 'gradient-brand text-white shadow-glow-sm'
+                : 'text-slate-400 hover:bg-primary-50 hover:text-primary-500'
+            }`}
           >
-            <ChevronUp className="w-6 h-6 stroke-[2.5]" />
+            <ChevronUp className="w-5 h-5" strokeWidth={2.5} />
           </button>
-          <span className={`font-bold text-sm ${isUpvoted ? 'text-orange-500' : isDownvoted ? 'text-indigo-500' : 'text-slate-700'}`}>
+          <span className={`font-display font-bold text-sm leading-none py-0.5 ${
+            isUpvoted ? 'text-primary-500' : isDownvoted ? 'text-red-400' : 'text-slate-600'
+          }`}>
             {voteCount}
           </span>
           <button
             onClick={handleDownvote}
-            className={`p-1.5 rounded-full hover:bg-slate-200 transition ${isDownvoted ? 'text-indigo-500' : 'text-slate-400'}`}
+            className={`p-1.5 rounded-xl transition-all duration-200 btn-press ${
+              isDownvoted
+                ? 'bg-red-50 text-red-500'
+                : 'text-slate-400 hover:bg-red-50 hover:text-red-400'
+            }`}
           >
-            <ChevronDown className="w-6 h-6 stroke-[2.5]" />
+            <ChevronDown className="w-5 h-5" strokeWidth={2.5} />
           </button>
         </div>
 
-        {/* Content Area */}
-        <div className="flex-1 p-4 sm:p-5">
+        {/* ── Content ── */}
+        <div className="flex-1 p-4 sm:p-5 min-w-0">
+
           {/* Header */}
-          <div className="flex items-start justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <Link to={`/profile/${post.user?._id}`}>
+          <div className="flex items-start justify-between gap-2 mb-3">
+            <div className="flex items-center gap-2 min-w-0">
+              <Link to={`/profile/${post.user?._id}`} className="shrink-0">
                 <img
                   src={post.user?.profileImage}
                   alt="User"
-                  className="w-8 h-8 rounded-full border border-slate-200 hover:opacity-80 transition"
+                  className="w-8 h-8 rounded-full border-2 border-primary-100 object-cover hover:border-primary-400 transition-all"
                 />
               </Link>
-              <div>
+              <div className="min-w-0">
                 <Link to={`/profile/${post.user?._id}`}>
-                  <p className="text-sm font-semibold text-slate-800 hover:text-primary-700 transition">{post.user?.name}</p>
+                  <p className="text-sm font-bold text-slate-800 hover:text-primary-600 transition truncate">{post.user?.name}</p>
                 </Link>
-                <div className="flex items-center text-xs text-slate-500 gap-2">
-                  <span>{new Date(post.createdAt).toLocaleDateString()}</span>
-                  <span>•</span>
-                  <span className={`px-2 py-0.5 rounded-full border text-[10px] font-bold tracking-wide uppercase ${getCategoryColor(post.type)}`}>
-                    {post.type}
-                  </span>
-                </div>
+                <p className="text-xs text-slate-400 truncate">
+                  {new Date(post.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
+                  {(post.locationName || post.location) && (
+                    <>
+                      <span className="mx-1.5 opacity-50">•</span>
+                      near <span className="font-medium text-slate-500">{post.locationName || 'this spot'}</span>
+                    </>
+                  )}
+                </p>
               </div>
+              <span className={`chip border shrink-0 ${tagColor}`}>{post.type}</span>
             </div>
 
-            {/* Top-right actions */}
-            <div className="flex items-center gap-1">
-              {post.expiresAt && (
-                <div className="flex items-center gap-1 text-xs font-medium text-amber-600 bg-amber-50 px-2 py-1 rounded-lg mr-1">
-                  <Clock className="w-3 h-3" />
-                  <span className="hidden sm:inline">Exp: {new Date(post.expiresAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                </div>
-              )}
-              {/* Bookmark */}
+            {/* Quick actions */}
+            <div className="flex items-center gap-0.5 shrink-0">
               <button
                 onClick={handleSave}
-                title={saved ? 'Unsave post' : 'Save post'}
-                className={`p-1.5 rounded-md transition ${saved ? 'text-primary-600 bg-primary-50' : 'text-slate-400 hover:text-primary-600 hover:bg-primary-50'}`}
+                className={`p-1.5 rounded-xl transition-all duration-200 btn-press ${saved ? 'text-primary-500 bg-primary-50' : 'text-slate-400 hover:text-primary-500 hover:bg-primary-50'}`}
+                title={saved ? 'Unsave' : 'Save'}
               >
                 <Bookmark className="w-4 h-4" fill={saved ? 'currentColor' : 'none'} />
               </button>
-              {/* Report – only non-owners */}
               {!isOwner && (
                 <button
                   onClick={handleReport}
-                  title="Report post"
-                  className={`p-1.5 rounded-md transition ${reported ? 'text-red-400 cursor-not-allowed' : 'text-slate-400 hover:text-red-500 hover:bg-red-50'}`}
+                  className={`p-1.5 rounded-xl transition-all duration-200 ${reported ? 'text-red-300 cursor-not-allowed' : 'text-slate-400 hover:text-red-500 hover:bg-red-50'}`}
+                  title="Report"
                 >
                   <Flag className="w-4 h-4" />
                 </button>
               )}
-              {/* Delete – only owner */}
               {isOwner && (
                 <button
                   onClick={handleDelete}
-                  title="Delete post"
-                  className="text-red-500 hover:text-red-600 p-1.5 rounded-md hover:bg-red-50 transition"
+                  className="p-1.5 rounded-xl text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all duration-200 btn-press"
+                  title="Delete"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
@@ -197,74 +185,81 @@ const PostCard = ({ post, onVote, onComment, onDelete }) => {
           </div>
 
           {/* Body */}
-          <p className="text-slate-700 font-medium mb-4 leading-relaxed">{post.description}</p>
+          <p className="text-slate-700 text-sm sm:text-[15px] leading-relaxed mb-3 font-medium">
+            {post.description}
+          </p>
 
           {post.image && (
-            <div className="rounded-2xl overflow-hidden bg-slate-100 mb-4 border border-slate-100">
-              <img src={post.image} alt="Post media" className="w-full h-auto max-h-96 object-cover" loading="lazy" />
+            <div className="rounded-2xl overflow-hidden bg-slate-100 mb-3 border border-slate-100">
+              <img src={post.image} alt="Post" className="w-full h-auto max-h-80 object-cover" loading="lazy" />
             </div>
           )}
 
-          {/* Footer Actions — horizontally scrollable on mobile */}
-          <div className="flex items-center gap-1 sm:gap-2 text-slate-500 text-sm font-medium border-t border-slate-100 pt-3 overflow-x-auto no-scrollbar">
+          {/* Location Name (Footer) */}
+          {(post.locationName || post.location) && (
+            <div className="flex items-center gap-1.5 mb-3 px-1">
+              <MapPin className="w-4 h-4 text-primary-500 shrink-0" />
+              <p className="text-sm font-bold text-slate-700">
+                Near <span className="text-primary-600">{post.locationName || `${post.location.lat.toFixed(4)}, ${post.location.lng.toFixed(4)}`}</span>
+              </p>
+            </div>
+          )}
+
+          {/* Footer actions */}
+          <div className="flex items-center gap-1 pt-2.5 border-t border-slate-100 overflow-x-auto no-scrollbar">
             <button
               onClick={() => setShowComments(!showComments)}
-              className="flex items-center gap-1.5 hover:bg-slate-100 px-2.5 sm:px-3 py-1.5 rounded-xl transition shrink-0"
+              className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-slate-500 hover:text-primary-600 hover:bg-primary-50 px-2.5 py-1.5 rounded-xl transition-all duration-200 shrink-0"
             >
               <MessageSquare className="w-4 h-4" />
-              <span className="text-xs sm:text-sm">{post.comments?.length || 0}</span>
-              <span className="hidden sm:inline text-sm">Comments</span>
+              <span>{post.comments?.length || 0}</span>
+              <span className="hidden sm:inline">Comments</span>
             </button>
 
             <button
               onClick={handleShare}
-              className="flex items-center gap-1.5 hover:bg-slate-100 px-2.5 sm:px-3 py-1.5 rounded-xl transition shrink-0"
+              className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-slate-500 hover:text-primary-600 hover:bg-primary-50 px-2.5 py-1.5 rounded-xl transition-all duration-200 shrink-0"
             >
               <Share2 className="w-4 h-4" />
-              <span className="text-xs sm:text-sm">Share</span>
+              <span className="hidden sm:inline">Share</span>
             </button>
 
-            {/* Spacer */}
-            <div className="flex-1 min-w-2" />
+            <div className="flex-1" />
 
-            {/* Navigate Here */}
-            {post.location && (
+            {post.location ? (
               <a
                 href={`https://www.google.com/maps/dir/?api=1&destination=${post.location.lat},${post.location.lng}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 hover:bg-primary-50 text-primary-700 px-2.5 sm:px-3 py-1.5 rounded-xl transition shrink-0"
+                className="flex items-center gap-1.5 text-xs font-bold gradient-brand text-white px-3 py-1.5 rounded-xl transition-all duration-200 shrink-0 shadow-glow-sm hover:shadow-glow btn-press"
               >
-                <Navigation className="w-4 h-4" />
-                <span className="text-xs">Navigate</span>
+                <Navigation className="w-3.5 h-3.5" />
+                Navigate
               </a>
-            )}
-
-            {!post.location && (
-              <div className="flex items-center gap-1.5 text-primary-600 bg-primary-50 px-2.5 sm:px-3 py-1.5 rounded-xl shrink-0">
-                <MapPin className="w-4 h-4" />
-                <span className="text-xs">Tagged</span>
-              </div>
+            ) : (
+              <span className="flex items-center gap-1 text-xs font-bold text-primary-500 bg-primary-50 px-2.5 py-1.5 rounded-xl border border-primary-100 shrink-0">
+                <MapPin className="w-3.5 h-3.5" /> Tagged
+              </span>
             )}
           </div>
 
-          {/* Comments Section */}
+          {/* Comments section */}
           {showComments && (
-            <div className="mt-4 pt-4 border-t border-slate-100">
-              <div className="space-y-4 mb-4 max-h-64 overflow-y-auto no-scrollbar">
+            <div className="mt-4 pt-4 border-t border-slate-100 animate-fade-in">
+              <div className="space-y-3 mb-4 max-h-60 overflow-y-auto no-scrollbar">
                 {post.comments?.length === 0 ? (
-                  <p className="text-sm text-center text-slate-400 py-4">No comments yet. Be the first to start the discussion!</p>
+                  <p className="text-xs text-center text-slate-400 py-3 italic">No comments yet — start the conversation!</p>
                 ) : (
                   post.comments?.map((comment, idx) => (
-                    <div key={idx} className="flex gap-3">
+                    <div key={idx} className="flex gap-2.5">
                       <Link to={`/profile/${comment.user?._id}`}>
-                        <img src={comment.user?.profileImage} alt="User" className="w-6 h-6 rounded-full hover:opacity-80 transition" />
+                        <img src={comment.user?.profileImage} alt="" className="w-6 h-6 rounded-full shrink-0 hover:opacity-80 transition" />
                       </Link>
-                      <div className="bg-slate-50 p-3 rounded-2xl rounded-tl-none border border-slate-100 flex-1">
+                      <div className="bg-slate-50 border border-slate-100 rounded-2xl rounded-tl-none px-3 py-2 flex-1 min-w-0">
                         <Link to={`/profile/${comment.user?._id}`}>
-                          <p className="text-xs font-semibold text-slate-800 mb-1 hover:text-primary-700 transition">{comment.user?.name}</p>
+                          <p className="text-xs font-bold text-slate-700 hover:text-primary-600 transition mb-0.5">{comment.user?.name}</p>
                         </Link>
-                        <p className="text-sm text-slate-600">{comment.text}</p>
+                        <p className="text-xs text-slate-600 leading-relaxed">{comment.text}</p>
                       </div>
                     </div>
                   ))
@@ -277,25 +272,25 @@ const PostCard = ({ post, onVote, onComment, onDelete }) => {
                     type="text"
                     value={commentText}
                     onChange={(e) => setCommentText(e.target.value)}
-                    placeholder="Add a comment..."
-                    className="flex-1 bg-slate-100 text-sm rounded-full px-4 py-2 outline-none focus:ring-2 focus:ring-primary-100 transition"
+                    placeholder="Say something…"
+                    className="flex-1 min-w-0 bg-slate-100 text-sm rounded-2xl px-4 py-2 outline-none focus:ring-2 focus:ring-primary-200 transition placeholder-slate-400 font-medium"
                   />
                   <button
                     type="submit"
-                    disabled={loading || !commentText.trim()}
-                    className="bg-primary-600 text-white rounded-full px-4 py-2 text-sm font-semibold hover:bg-primary-700 disabled:opacity-50 transition"
+                    disabled={submitting || !commentText.trim()}
+                    className="gradient-brand text-white rounded-2xl px-4 py-2 text-sm font-bold disabled:opacity-50 transition btn-press shrink-0"
                   >
                     Post
                   </button>
                 </form>
               ) : (
-                <p className="text-xs text-center text-slate-500 italic">Log in to leave a comment.</p>
+                <p className="text-xs text-center text-slate-400 italic py-1">Log in to comment.</p>
               )}
             </div>
           )}
         </div>
       </div>
-    </div>
+    </article>
   );
 };
 
