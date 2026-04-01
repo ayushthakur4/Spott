@@ -1,7 +1,8 @@
 import { useState, useContext, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
-import { MapPin, ArrowRight, Loader2 } from 'lucide-react';
+import { ArrowRight, Loader2 } from 'lucide-react';
+import logo from '../assets/logo.png';
 
 const Register = () => {
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
@@ -38,10 +39,11 @@ const Register = () => {
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="flex justify-center mb-6">
-          <div className="bg-primary-600 p-3 rounded-2xl shadow-sm">
-            <MapPin className="text-white w-8 h-8" />
-          </div>
+        <div className="flex flex-col items-center mb-6 gap-2">
+          <img src={logo} alt="Spott" className="h-16 w-auto object-contain" />
+          <span className="text-2xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-primary-700 to-primary-500 tracking-tight">
+            Spott
+          </span>
         </div>
         <h2 className="mt-2 text-center text-3xl font-extrabold text-slate-900">
           Join the Community

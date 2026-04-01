@@ -1,7 +1,8 @@
 import { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
-import { MapPin, LogOut, User, Menu } from 'lucide-react';
+import { LogOut } from 'lucide-react';
+import logo from '../assets/logo.png';
 
 const Navbar = () => {
   const { user, logout } = useContext(AuthContext);
@@ -16,10 +17,8 @@ const Navbar = () => {
     <nav className="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-sm px-4 md:px-6 h-16 flex items-center justify-between">
       <div className="flex items-center gap-2">
         <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition">
-          <div className="bg-primary-600 p-2 rounded-xl">
-            <MapPin className="text-white w-5 h-5" />
-          </div>
-          <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-700 to-primary-500 hidden sm:block">
+          <img src={logo} alt="Spott" className="h-10 w-auto object-contain" />
+          <span className="text-xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-primary-700 to-primary-500 hidden sm:block tracking-tight">
             Spott
           </span>
         </Link>

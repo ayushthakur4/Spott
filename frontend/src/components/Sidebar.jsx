@@ -2,6 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Home, Compass, User } from 'lucide-react';
 import { useContext } from 'react';
 import AuthContext from '../context/AuthContext';
+import logo from '../assets/logo.png';
 
 const Sidebar = () => {
   const location = useLocation();
@@ -16,6 +17,13 @@ const Sidebar = () => {
   return (
     <div className="h-full py-6 px-4 flex flex-col justify-between">
       <div className="space-y-4">
+        {/* Logo */}
+        <Link to="/" className="flex items-center justify-center gap-2 mb-2 hover:opacity-80 transition">
+          <img src={logo} alt="Spott" className="h-10 w-auto object-contain" />
+          <span className="text-lg font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-primary-700 to-primary-500 tracking-tight">
+            Spott
+          </span>
+        </Link>
         <div className="space-y-1">
           {navLinks.map((link) => {
             const Icon = link.icon;
