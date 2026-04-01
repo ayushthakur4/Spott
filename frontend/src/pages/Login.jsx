@@ -107,7 +107,7 @@ const Login = () => {
                 <div className="w-full border-t border-slate-200" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-slate-500 font-medium">New to RoadAlert?</span>
+                <span className="px-2 bg-white text-slate-500 font-medium">New to Spott?</span>
               </div>
             </div>
 
@@ -123,6 +123,11 @@ const Login = () => {
           </div>
         </div>
       </div>
+
+      {/* Copyright */}
+      <p className="mt-6 text-center text-xs text-slate-400">
+        © {new Date().getFullYear()} <span className="font-semibold">Ayush Thakur</span> · All rights reserved.
+      </p>
     </div>
   );
 };

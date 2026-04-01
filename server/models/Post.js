@@ -33,7 +33,7 @@ const postSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ['Police Alert', 'Accident', 'Viewpoint', 'Picnic', 'Couple Safe', 'Cafe'],
+      enum: ['Police Alert', 'Accident', 'Viewpoint', 'Picnic', 'Couple Safe', 'Cafe', 'Random'],
       required: true,
     },
     description: {

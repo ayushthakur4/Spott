@@ -20,7 +20,7 @@ const Navbar = () => {
             <MapPin className="text-white w-5 h-5" />
           </div>
           <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-700 to-primary-500 hidden sm:block">
-            RoadAlert
+            Spott
           </span>
         </Link>
       </div>

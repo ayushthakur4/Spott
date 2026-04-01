@@ -138,6 +138,11 @@ const Register = () => {
           </div>
         </div>
       </div>
+
+      {/* Copyright */}
+      <p className="mt-6 text-center text-xs text-slate-400">
+        © {new Date().getFullYear()} <span className="font-semibold">Ayush Thakur</span> · All rights reserved.
+      </p>
     </div>
   );
 };

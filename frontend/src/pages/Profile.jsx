@@ -4,6 +4,7 @@ import { Loader2, MapPin, Star, Pencil, Check, X, ChevronUp } from 'lucide-react
 import api from '../services/api';
 import AuthContext from '../context/AuthContext';
 import PostCard from '../components/PostCard';
+import { useAlert } from '../components/CustomAlert';
 
 const AVATAR_OPTIONS = [
   'https://api.dicebear.com/7.x/adventurer/svg?seed=Spott1&backgroundColor=b6e3f4',
@@ -20,6 +21,7 @@ const getBadge = (score) => {
 };
 
 const Profile = () => {
+  const { showAlert, AlertContainer } = useAlert();
   const { id } = useParams();
   const navigate = useNavigate();
   const { user: currentUser, login } = useContext(AuthContext);
@@ -67,7 +69,7 @@ const Profile = () => {
       setEditingAvatar(false);
       setSelectedAvatar(null);
     } catch (err) {
-      alert('Failed to update avatar');
+      showAlert('Failed to update avatar', 'error');
     } finally {
       setSaving(false);
     }
@@ -87,7 +89,8 @@ const Profile = () => {
   const badge = getBadge(trustScore);
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
+    <div className="max-w-3xl mx-auto px-3 sm:px-4 py-5 sm:py-8">
+      <AlertContainer />
       {/* Profile Card */}
       <div className="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden mb-8">
         {/* Cover */}
@@ -116,17 +119,17 @@ const Profile = () => {
           {/* Name & Badges */}
           <h1 className="text-2xl font-bold text-slate-900">{user.name}</h1>
           <p className="text-sm text-slate-500 mb-3">{user.email}</p>
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className={`px-3 py-1 text-xs font-bold rounded-full border ${badge.color}`}>
+          <div className="flex items-center gap-2 flex-wrap mt-1">
+            <span className={`px-2.5 py-1 text-xs font-bold rounded-full border ${badge.color}`}>
               {badge.label}
             </span>
-            <span className="flex items-center gap-1 px-3 py-1 text-xs font-bold rounded-full border text-violet-700 bg-violet-50 border-violet-300">
+            <span className="flex items-center gap-1 px-2.5 py-1 text-xs font-bold rounded-full border text-violet-700 bg-violet-50 border-violet-300">
               <Star className="w-3 h-3" />
-              Trust Score: {trustScore}
+              Trust: {trustScore}
             </span>
-            <span className="flex items-center gap-1 px-3 py-1 text-xs font-bold rounded-full border text-slate-600 bg-slate-50 border-slate-300">
+            <span className="flex items-center gap-1 px-2.5 py-1 text-xs font-bold rounded-full border text-slate-600 bg-slate-50 border-slate-300">
               <MapPin className="w-3 h-3" />
-              {posts.length} Spots Posted
+              {posts.length} Spots
             </span>
           </div>
 

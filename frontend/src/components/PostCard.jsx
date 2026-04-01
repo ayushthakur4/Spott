@@ -104,6 +104,7 @@ const PostCard = ({ post, onVote, onComment, onDelete }) => {
       case 'Picnic':       return 'text-amber-600 bg-amber-50 border-amber-200';
       case 'Couple Safe':  return 'text-pink-600 bg-pink-50 border-pink-200';
       case 'Cafe':         return 'text-orange-600 bg-orange-50 border-orange-200';
+      case 'Random':       return 'text-violet-600 bg-violet-50 border-violet-200';
       default:             return 'text-slate-600 bg-slate-50 border-slate-200';
     }
   };
@@ -161,7 +162,7 @@ const PostCard = ({ post, onVote, onComment, onDelete }) => {
               {post.expiresAt && (
                 <div className="flex items-center gap-1 text-xs font-medium text-amber-600 bg-amber-50 px-2 py-1 rounded-lg mr-1">
                   <Clock className="w-3 h-3" />
-                  <span>Exp: {new Date(post.expiresAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                  <span className="hidden sm:inline">Exp: {new Date(post.expiresAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                 </div>
               )}
               {/* Bookmark */}
@@ -204,23 +205,27 @@ const PostCard = ({ post, onVote, onComment, onDelete }) => {
             </div>
           )}
 
-          {/* Footer Actions */}
-          <div className="flex items-center gap-2 sm:gap-4 text-slate-500 text-sm font-medium border-t border-slate-100 pt-3 flex-wrap">
+          {/* Footer Actions — horizontally scrollable on mobile */}
+          <div className="flex items-center gap-1 sm:gap-2 text-slate-500 text-sm font-medium border-t border-slate-100 pt-3 overflow-x-auto no-scrollbar">
             <button
               onClick={() => setShowComments(!showComments)}
-              className="flex items-center gap-2 hover:bg-slate-100 px-3 py-1.5 rounded-xl transition"
+              className="flex items-center gap-1.5 hover:bg-slate-100 px-2.5 sm:px-3 py-1.5 rounded-xl transition shrink-0"
             >
               <MessageSquare className="w-4 h-4" />
-              <span>{post.comments?.length || 0} Comments</span>
+              <span className="text-xs sm:text-sm">{post.comments?.length || 0}</span>
+              <span className="hidden sm:inline text-sm">Comments</span>
             </button>
 
             <button
               onClick={handleShare}
-              className="flex items-center gap-2 hover:bg-slate-100 px-3 py-1.5 rounded-xl transition"
+              className="flex items-center gap-1.5 hover:bg-slate-100 px-2.5 sm:px-3 py-1.5 rounded-xl transition shrink-0"
             >
               <Share2 className="w-4 h-4" />
-              <span>Share</span>
+              <span className="text-xs sm:text-sm">Share</span>
             </button>
+
+            {/* Spacer */}
+            <div className="flex-1 min-w-2" />
 
             {/* Navigate Here */}
             {post.location && (
@@ -228,7 +233,7 @@ const PostCard = ({ post, onVote, onComment, onDelete }) => {
                 href={`https://www.google.com/maps/dir/?api=1&destination=${post.location.lat},${post.location.lng}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 hover:bg-primary-50 text-primary-700 px-3 py-1.5 rounded-xl transition ml-auto"
+                className="flex items-center gap-1.5 hover:bg-primary-50 text-primary-700 px-2.5 sm:px-3 py-1.5 rounded-xl transition shrink-0"
               >
                 <Navigation className="w-4 h-4" />
                 <span className="text-xs">Navigate</span>
@@ -236,9 +241,9 @@ const PostCard = ({ post, onVote, onComment, onDelete }) => {
             )}
 
             {!post.location && (
-              <div className="flex items-center gap-2 ml-auto text-primary-600 bg-primary-50 px-3 py-1.5 rounded-xl">
+              <div className="flex items-center gap-1.5 text-primary-600 bg-primary-50 px-2.5 sm:px-3 py-1.5 rounded-xl shrink-0">
                 <MapPin className="w-4 h-4" />
-                <span className="text-xs">Location Tagged</span>
+                <span className="text-xs">Tagged</span>
               </div>
             )}
           </div>

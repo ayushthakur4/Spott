@@ -12,7 +12,7 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
   const [location, setLocation] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  
+
   const fileInputRef = useRef(null);
 
   if (!isOpen) return null;
@@ -90,7 +90,7 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
     onClose();
   };
 
-  const categories = ['Police Alert', 'Accident', 'Viewpoint', 'Picnic', 'Couple Safe', 'Cafe'];
+  const categories = ['Police Alert', 'Accident', 'Viewpoint', 'Picnic', 'Couple Safe', 'Cafe', 'Random'];
 
   return (
     <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
@@ -114,8 +114,8 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
             <img src={user?.profileImage} alt="User" className="w-10 h-10 rounded-full bg-slate-200" />
             <div>
               <p className="font-semibold text-sm text-slate-800">{user?.name}</p>
-              <select 
-                value={type} 
+              <select
+                value={type}
                 onChange={(e) => setType(e.target.value)}
                 className="text-xs bg-slate-100 text-slate-600 rounded-lg px-2 py-1 outline-none border-none font-medium mt-1 cursor-pointer focus:ring-2 focus:ring-primary-100"
               >
@@ -136,8 +136,8 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
           {preview && (
             <div className="relative rounded-2xl overflow-hidden bg-slate-100">
               <img src={preview} alt="Upload preview" className="w-full h-auto max-h-64 object-cover" />
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={() => { setPreview(null); setImage(null); }}
                 className="absolute top-2 right-2 bg-black/60 backdrop-blur text-white p-1.5 rounded-full hover:bg-black/80 transition"
               >
@@ -147,30 +147,29 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
           )}
 
           <div className="flex items-center gap-3 pt-2">
-            <input 
-              type="file" 
-              accept="image/*" 
-              ref={fileInputRef} 
-              className="hidden" 
-              onChange={handleImageChange} 
+            <input
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              className="hidden"
+              onChange={handleImageChange}
             />
-            <button 
-              type="button" 
+            <button
+              type="button"
               onClick={() => fileInputRef.current.click()}
               className="flex items-center gap-2 px-4 py-2 bg-primary-50 text-primary-600 hover:bg-primary-100 rounded-xl font-medium transition text-sm"
             >
-              <ImageIcon className="w-4 h-4" /> 
+              <ImageIcon className="w-4 h-4" />
               {preview ? 'Change Image' : 'Add Image'}
             </button>
-            
-            <button 
-              type="button" 
+
+            <button
+              type="button"
               onClick={getLocation}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition text-sm ${
-                location ? 'bg-green-50 text-green-600 border border-green-200' : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-transparent'
-              }`}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition text-sm ${location ? 'bg-green-50 text-green-600 border border-green-200' : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-transparent'
+                }`}
             >
-              <MapPin className="w-4 h-4" /> 
+              <MapPin className="w-4 h-4" />
               {location ? 'Location Added' : 'Get Location'}
             </button>
           </div>

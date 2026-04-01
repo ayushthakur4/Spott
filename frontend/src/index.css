@@ -16,6 +16,8 @@
 body {
   background-color: #f8fafc; /* bg-slate-50 */
   color: #0f172a; /* text-slate-900 */
+  /* Safe-area insets for iPhone notch / home bar */
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 /* Leaflet Map overrides */
@@ -31,13 +33,19 @@ body {
 }
 
 /* Hide scrollbar for clean look */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-
+.no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar {
   -ms-overflow-style: none;
-  /* IE and Edge */
   scrollbar-width: none;
-  /* Firefox */
+}
+
+/* Ensure touch targets are large enough (WCAG 2.5.5) */
+button, a, [role="button"] {
+  min-height: 36px;
+}
+
+/* Prevent text inflating on iOS landscape */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
