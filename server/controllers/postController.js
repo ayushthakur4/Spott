@@ -4,13 +4,31 @@ const { cloudinary } = require('../config/cloudinary');
 // Get all posts for feed
 const getPosts = async (req, res) => {
   try {
-    const posts = await Post.find()
+    const { lat, lng } = req.query;
+    let filter = {
+      $expr: { $lt: [{ $size: { $ifNull: ["$reports", []] } }, 5] }
+    };
+
+    if (lat && lng) {
+      filter.geo = {
+        $near: {
+          $geometry: {
+            type: 'Point',
+            coordinates: [Number(lng), Number(lat)]
+          },
+          $maxDistance: 15000 // 15km
+        }
+      };
+    }
+
+    const posts = await Post.find(filter)
       .populate('user', 'name profileImage')
       .populate('comments.user', 'name profileImage')
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 }); // Sorting with $near might be ignored by MongoDB as $near natively sorts by distance, which is actually better. So we'll leave sort but MongoDB ignores it for geo queries.
 
     res.status(200).json(posts);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -46,6 +64,10 @@ const createPost = async (req, res) => {
       location: {
         lat: Number(lat),
         lng: Number(lng),
+      },
+      geo: {
+        type: 'Point',
+        coordinates: [Number(lng), Number(lat)]
       },
       type,
       description,
@@ -175,6 +197,25 @@ const deletePost = async (req, res) => {
   }
 };
 
+// Report Post
+const reportPost = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+
+    if (!post.reports.includes(req.user.id)) {
+      post.reports.push(req.user.id);
+      await post.save();
+    }
+
+    res.status(200).json({ message: 'Post reported' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getPosts,
   createPost,
@@ -182,4 +223,5 @@ module.exports = {
   downvotePost,
   addComment,
   deletePost,
+  reportPost,
 };

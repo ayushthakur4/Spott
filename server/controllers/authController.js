@@ -37,6 +37,7 @@ const registerUser = async (req, res) => {
         name: user.name,
         email: user.email,
         profileImage: user.profileImage,
+        savedPosts: user.savedPosts || [],
         token: generateToken(user._id),
       });
     } else {
@@ -59,6 +60,7 @@ const loginUser = async (req, res) => {
         name: user.name,
         email: user.email,
         profileImage: user.profileImage,
+        savedPosts: user.savedPosts || [],
         token: generateToken(user._id),
       });
     } else {
