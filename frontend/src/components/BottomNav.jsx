@@ -1,10 +1,11 @@
 import { useContext } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
 
 const BottomNav = ({ setIsCreateModalOpen }) => {
-  const { user } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
   const location = useLocation();
+  const navigate = useNavigate();
 
   if (!user) return null;
 
@@ -31,10 +32,10 @@ const BottomNav = ({ setIsCreateModalOpen }) => {
         </button>
       </div>
       
-      <div className={`flex flex-col items-center gap-1 cursor-pointer ${isActive('/alerts') ? 'text-[var(--color-primary)]' : 'text-[var(--color-on-surface-variant)]'}`}>
+      <Link to="/explore?filter=hazard" className={`flex flex-col items-center gap-1 ${location.search.includes('hazard') ? 'text-[var(--color-secondary)]' : 'text-[var(--color-on-surface-variant)]'}`}>
         <span className="material-symbols-outlined" data-icon="warning">warning</span>
         <span className="text-[10px]">Alerts</span>
-      </div>
+      </Link>
       
       <Link to="/profile" className={`flex flex-col items-center gap-1 ${isActive('/profile') ? 'text-[var(--color-primary)]' : 'text-[var(--color-on-surface-variant)]'}`}>
         <span className="material-symbols-outlined" data-icon="person">person</span>

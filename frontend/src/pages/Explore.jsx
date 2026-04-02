@@ -1,25 +1,49 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import PostCard from '../components/PostCard';
-import { Compass, Flame, Leaf, Coffee, MapPin, Heart, Shuffle, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import api from '../services/api';
+import AuthContext from '../context/AuthContext';
 
 const categories = [
   { id: 'all',       name: 'All',        icon: '📡', match: '' },
+  { id: 'hazard',    name: 'Hazards',    icon: '⚠️', match: 'Accident' },
+  { id: 'police',    name: 'Police',     icon: '🚨', match: 'Police Alert' },
   { id: 'viewpoint', name: 'Viewpoints', icon: '🌄', match: 'Viewpoint' },
   { id: 'picnic',    name: 'Picnic',     icon: '🌿', match: 'Picnic' },
   { id: 'couple',    name: 'Couple',     icon: '💕', match: 'Couple Safe' },
   { id: 'cafe',      name: 'Cafés',      icon: '☕', match: 'Cafe' },
+  { id: 'chill',     name: 'Chill',      icon: '🧊', matchGroup: ['Viewpoint', 'Picnic', 'Couple Safe', 'Cafe'] },
   { id: 'random',    name: 'Random',     icon: '🎲', match: 'Random' },
 ];
 
-import AuthContext from '../context/AuthContext';
-import { useContext } from 'react';
+// Map sidebar query filter values to tab IDs
+const filterToTabMap = {
+  'hazard': 'hazard',
+  'police': 'police',
+  'chill': 'chill',
+};
 
 const Explore = () => {
   const { user } = useContext(AuthContext);
-  const [activeTab, setActiveTab] = useState('all');
+  const [searchParams] = useSearchParams();
+  const filterParam = searchParams.get('filter');
+
+  const [activeTab, setActiveTab] = useState(() => {
+    if (filterParam && filterToTabMap[filterParam]) {
+      return filterToTabMap[filterParam];
+    }
+    return 'all';
+  });
   const [posts, setPosts]         = useState([]);
   const [loading, setLoading]     = useState(true);
+
+  // Sync tab when URL filter changes
+  useEffect(() => {
+    if (filterParam && filterToTabMap[filterParam]) {
+      setActiveTab(filterToTabMap[filterParam]);
+    }
+  }, [filterParam]);
 
   useEffect(() => { fetchPosts(); }, []);
 
@@ -34,9 +58,12 @@ const Explore = () => {
     }
   };
 
+  const activeCat = categories.find(c => c.id === activeTab);
   const filteredPosts = activeTab === 'all'
     ? posts
-    : posts.filter(p => p.type === categories.find(c => c.id === activeTab)?.match);
+    : activeCat?.matchGroup
+      ? posts.filter(p => activeCat.matchGroup.includes(p.type))
+      : posts.filter(p => p.type === activeCat?.match);
 
   return (
     <main className={`${user ? 'lg:ml-64' : ''} h-screen pt-20 pb-20 md:pb-0 relative overflow-hidden flex animate-fade-in bg-[var(--color-background)]`}>
@@ -62,13 +89,13 @@ const Explore = () => {
         {/* Category pills */}
         <div className="flex overflow-x-auto no-scrollbar gap-2 pb-2 mb-5 -mx-1 px-1 snap-x">
           {categories.map((cat) => {
-            const isActive = activeTab === cat.id;
+            const isActiveCat = activeTab === cat.id;
             return (
               <button
                 key={cat.id}
                 onClick={() => setActiveTab(cat.id)}
                 className={`flex items-center gap-2 whitespace-nowrap px-5 py-2.5 rounded-3xl font-bold text-xs tracking-wide label-text snap-start shrink-0 btn-press transition-all duration-200 ghost-border ${
-                  isActive
+                  isActiveCat
                     ? 'gradient-primary text-[var(--color-on-surface)] glow-primary scale-[1.03]'
                     : 'bg-[var(--color-surface-container-highest)] text-[var(--color-on-surface-variant)] hover:border-[var(--color-primary)]/50 hover:text-[var(--color-on-surface)] hover:bg-[var(--color-surface-container-highest)]'
                 }`}
@@ -95,10 +122,10 @@ const Explore = () => {
           </div>
         ) : filteredPosts.length === 0 ? (
           <div className="text-center py-24 animate-fade-in glass-panel ghost-border rounded-3xl">
-            <div className="text-5xl mb-5 opacity-80">{categories.find(c => c.id === activeTab)?.icon || '🗺'}</div>
+            <div className="text-5xl mb-5 opacity-80">{activeCat?.icon || '🗺'}</div>
             <p className="font-display font-black text-xl text-[var(--color-on-surface)] mb-2 tracking-wide uppercase">NO SIGNALS MATCHING</p>
             <p className="text-sm text-[var(--color-on-surface-variant)] font-medium">
-              Adjust filters or transmit a new {activeTab !== 'all' ? categories.find(c => c.id === activeTab)?.name?.toUpperCase() : 'SIGNAL'}.
+              Adjust filters or transmit a new {activeTab !== 'all' ? activeCat?.name?.toUpperCase() : 'SIGNAL'}.
             </p>
           </div>
         ) : (
