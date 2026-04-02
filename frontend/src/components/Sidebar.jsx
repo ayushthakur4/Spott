@@ -1,14 +1,20 @@
 import { useContext } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
 
 const Sidebar = ({ setIsCreateModalOpen }) => {
-  const { user } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
   const location = useLocation();
+  const navigate = useNavigate();
 
   if (!user) return null;
 
   const isActive = (path) => location.pathname === path;
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   return (
     <aside className="h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col bg-[var(--color-surface-container-low)] shadow-2xl shadow-black font-['Inter'] tracking-tight z-40 pt-24">
@@ -36,20 +42,29 @@ const Sidebar = ({ setIsCreateModalOpen }) => {
             <span>Explore</span>
           </Link>
           
-          <div className="flex items-center gap-4 px-4 py-3 text-[var(--color-on-surface-variant)] hover:bg-[var(--color-secondary)]/10 hover:text-[var(--color-secondary)] rounded-xl hover:translate-x-1 transition-all duration-200 cursor-pointer font-medium">
+          <Link 
+            to="/explore?filter=hazard"
+            className="flex items-center gap-4 px-4 py-3 text-[var(--color-on-surface-variant)] hover:bg-[var(--color-secondary)]/10 hover:text-[var(--color-secondary)] rounded-xl hover:translate-x-1 transition-all duration-200 cursor-pointer font-medium"
+          >
             <span className="material-symbols-outlined" data-icon="warning">warning</span>
             <span>Road Hazards</span>
-          </div>
+          </Link>
           
-          <div className="flex items-center gap-4 px-4 py-3 text-[var(--color-on-surface-variant)] hover:bg-[var(--color-tertiary)]/10 hover:text-[var(--color-tertiary)] rounded-xl hover:translate-x-1 transition-all duration-200 cursor-pointer font-medium">
+          <Link 
+            to="/explore?filter=chill"
+            className="flex items-center gap-4 px-4 py-3 text-[var(--color-on-surface-variant)] hover:bg-[var(--color-tertiary)]/10 hover:text-[var(--color-tertiary)] rounded-xl hover:translate-x-1 transition-all duration-200 cursor-pointer font-medium"
+          >
             <span className="material-symbols-outlined" data-icon="local_cafe">local_cafe</span>
             <span>Chill Spots</span>
-          </div>
+          </Link>
           
-          <div className="flex items-center gap-4 px-4 py-3 text-[var(--color-on-surface-variant)] hover:bg-[var(--color-error)]/10 hover:text-[var(--color-error)] rounded-xl hover:translate-x-1 transition-all duration-200 cursor-pointer font-medium">
+          <Link 
+            to="/explore?filter=police"
+            className="flex items-center gap-4 px-4 py-3 text-[var(--color-on-surface-variant)] hover:bg-[var(--color-error)]/10 hover:text-[var(--color-error)] rounded-xl hover:translate-x-1 transition-all duration-200 cursor-pointer font-medium"
+          >
             <span className="material-symbols-outlined" data-icon="local_police">local_police</span>
             <span>Police Activity</span>
-          </div>
+          </Link>
         </nav>
         
         <button 
@@ -64,10 +79,13 @@ const Sidebar = ({ setIsCreateModalOpen }) => {
             <span className="material-symbols-outlined text-[20px]" data-icon="settings">settings</span>
             <span>Profile Settings</span>
           </Link>
-          <div className="flex items-center gap-4 px-4 py-2 text-[var(--color-on-surface-variant)] hover:text-white transition-colors text-sm cursor-pointer">
-            <span className="material-symbols-outlined text-[20px]" data-icon="help">help</span>
-            <span>Support</span>
-          </div>
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-4 px-4 py-2 text-[var(--color-error)] hover:bg-[var(--color-error)]/10 rounded-xl transition-colors text-sm w-full text-left font-medium"
+          >
+            <span className="material-symbols-outlined text-[20px]">logout</span>
+            <span>Logout</span>
+          </button>
         </div>
       </div>
     </aside>
