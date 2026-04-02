@@ -1,88 +1,76 @@
-import { Link, useLocation } from 'react-router-dom';
-import { Home, Compass, User, Zap } from 'lucide-react';
 import { useContext } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
-import logo from '../assets/logo.png';
 
-const Sidebar = () => {
-  const location = useLocation();
+const Sidebar = ({ setIsCreateModalOpen }) => {
   const { user } = useContext(AuthContext);
+  const location = useLocation();
 
-  const navLinks = [
-    { name: 'Home',     icon: Home,    path: '/',        emoji: '🏠' },
-    { name: 'Explore',  icon: Compass, path: '/explore', emoji: '🧭' },
-    ...(user ? [{ name: 'Profile', icon: User, path: `/profile/${user._id}`, emoji: '👤' }] : []),
-  ];
+  if (!user) return null;
 
   const isActive = (path) => location.pathname === path;
 
   return (
-    <div className="flex flex-col h-full py-4 px-3 overflow-y-auto no-scrollbar">
-
-      {/* Brand in sidebar */}
-      <Link to="/" className="flex items-center gap-2.5 px-2 mb-6 group btn-press">
-        <div className="relative">
-          <div className="absolute inset-0 bg-primary-400/25 blur-md rounded-full scale-150 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          <img src={logo} alt="Spott" className="relative h-8 w-auto object-contain z-10" />
+    <aside className="h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col bg-[var(--color-surface-container-low)] shadow-2xl shadow-black font-['Inter'] tracking-tight z-40 pt-24">
+      <div className="flex flex-col p-6 space-y-8 h-full">
+        
+        <div className="space-y-1">
+          <h2 className="text-[var(--color-on-surface)] text-xl font-bold">Navigator</h2>
+          <p className="text-[var(--color-on-surface-variant)] text-xs uppercase tracking-widest opacity-60">The Luminescent Path</p>
         </div>
-        <span className="font-display font-bold text-lg text-gradient tracking-tight">Spott</span>
-      </Link>
-
-      {/* Section label */}
-      <p className="text-[10px] uppercase tracking-widest font-bold text-slate-400 px-3 mb-2">Navigation</p>
-
-      {/* Nav links */}
-      <nav className="space-y-1 flex-1">
-        {navLinks.map((link) => {
-          const Icon = link.icon;
-          const active = isActive(link.path);
-
-          return (
-            <Link
-              key={link.path}
-              to={link.path}
-              className={`relative flex items-center gap-3 px-3 py-2.5 rounded-2xl font-semibold text-sm transition-all duration-200 group ${
-                active
-                  ? 'text-white gradient-brand shadow-glow-sm'
-                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-              }`}
-            >
-              <div className={`flex items-center justify-center w-7 h-7 rounded-xl transition-all duration-200 ${
-                active ? 'bg-white/20' : 'bg-slate-100 group-hover:bg-slate-200'
-              }`}>
-                <Icon className="w-4 h-4" />
-              </div>
-              <span>{link.name}</span>
-              {active && (
-                <span className="ml-auto text-white/70 text-xs">●</span>
-              )}
-            </Link>
-          );
-        })}
-      </nav>
-
-      {/* Bottom CTA / copyright */}
-      <div className="mt-6 space-y-4">
-        {!user && (
-          <div className="relative overflow-hidden rounded-2xl p-4 gradient-brand text-white">
-            <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-8 translate-x-8 blur-xl" />
-            <Zap className="w-5 h-5 mb-2 opacity-80" />
-            <p className="font-display font-bold text-sm leading-snug mb-1">Join Spott</p>
-            <p className="text-xs text-white/75 mb-3 leading-relaxed">Report alerts & discover hidden spots near you.</p>
-            <Link
-              to="/register"
-              className="block w-full text-center bg-white text-primary-600 font-bold text-xs py-2 rounded-xl hover:bg-primary-50 transition btn-press"
-            >
-              Get Started Free →
-            </Link>
+        
+        <nav className="flex-1 space-y-2">
+          <Link 
+            to="/" 
+            className={`flex items-center gap-4 px-4 py-3 rounded-xl hover:translate-x-1 transition-all duration-200 cursor-pointer active:opacity-80 ${isActive('/') ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-semibold' : 'text-[var(--color-on-surface-variant)] hover:bg-white/5 font-medium'}`}
+          >
+            <span className="material-symbols-outlined" data-icon="home">home</span>
+            <span>Home</span>
+          </Link>
+          
+          <Link 
+            to="/explore" 
+            className={`flex items-center gap-4 px-4 py-3 rounded-xl hover:translate-x-1 transition-all duration-200 cursor-pointer active:opacity-80 ${isActive('/explore') ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-semibold' : 'text-[var(--color-on-surface-variant)] hover:bg-white/5 font-medium'}`}
+          >
+            <span className="material-symbols-outlined" data-icon="explore">explore</span>
+            <span>Explore</span>
+          </Link>
+          
+          <div className="flex items-center gap-4 px-4 py-3 text-[var(--color-on-surface-variant)] hover:bg-[var(--color-secondary)]/10 hover:text-[var(--color-secondary)] rounded-xl hover:translate-x-1 transition-all duration-200 cursor-pointer font-medium">
+            <span className="material-symbols-outlined" data-icon="warning">warning</span>
+            <span>Road Hazards</span>
           </div>
-        )}
-
-        <p className="text-[10px] text-slate-400 text-center leading-loose px-2">
-          © {new Date().getFullYear()} <span className="font-semibold text-slate-500">Ayush Thakur</span>
-        </p>
+          
+          <div className="flex items-center gap-4 px-4 py-3 text-[var(--color-on-surface-variant)] hover:bg-[var(--color-tertiary)]/10 hover:text-[var(--color-tertiary)] rounded-xl hover:translate-x-1 transition-all duration-200 cursor-pointer font-medium">
+            <span className="material-symbols-outlined" data-icon="local_cafe">local_cafe</span>
+            <span>Chill Spots</span>
+          </div>
+          
+          <div className="flex items-center gap-4 px-4 py-3 text-[var(--color-on-surface-variant)] hover:bg-[var(--color-error)]/10 hover:text-[var(--color-error)] rounded-xl hover:translate-x-1 transition-all duration-200 cursor-pointer font-medium">
+            <span className="material-symbols-outlined" data-icon="local_police">local_police</span>
+            <span>Police Activity</span>
+          </div>
+        </nav>
+        
+        <button 
+          onClick={() => setIsCreateModalOpen && setIsCreateModalOpen(true)}
+          className="w-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] text-[var(--color-on-primary-container)] font-bold py-4 rounded-xl shadow-[0_0_20px_rgba(122,175,255,0.2)] active:scale-[0.98] transition-transform flex items-center justify-center gap-2 tracking-wide"
+        >
+          <span className="material-symbols-outlined max-w-none text-xl">add_circle</span> Report Hazard
+        </button>
+        
+        <div className="pt-6 border-t border-white/5 space-y-2">
+          <Link to="/profile" className="flex items-center gap-4 px-4 py-2 text-[var(--color-on-surface-variant)] hover:text-white transition-colors text-sm">
+            <span className="material-symbols-outlined text-[20px]" data-icon="settings">settings</span>
+            <span>Profile Settings</span>
+          </Link>
+          <div className="flex items-center gap-4 px-4 py-2 text-[var(--color-on-surface-variant)] hover:text-white transition-colors text-sm cursor-pointer">
+            <span className="material-symbols-outlined text-[20px]" data-icon="help">help</span>
+            <span>Support</span>
+          </div>
+        </div>
       </div>
-    </div>
+    </aside>
   );
 };
 

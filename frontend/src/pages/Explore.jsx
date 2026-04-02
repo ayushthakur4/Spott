@@ -4,7 +4,7 @@ import { Compass, Flame, Leaf, Coffee, MapPin, Heart, Shuffle, Loader2 } from 'l
 import api from '../services/api';
 
 const categories = [
-  { id: 'all',       name: 'All',        icon: '🔥', match: '' },
+  { id: 'all',       name: 'All',        icon: '📡', match: '' },
   { id: 'viewpoint', name: 'Viewpoints', icon: '🌄', match: 'Viewpoint' },
   { id: 'picnic',    name: 'Picnic',     icon: '🌿', match: 'Picnic' },
   { id: 'couple',    name: 'Couple',     icon: '💕', match: 'Couple Safe' },
@@ -12,7 +12,11 @@ const categories = [
   { id: 'random',    name: 'Random',     icon: '🎲', match: 'Random' },
 ];
 
+import AuthContext from '../context/AuthContext';
+import { useContext } from 'react';
+
 const Explore = () => {
+  const { user } = useContext(AuthContext);
   const [activeTab, setActiveTab] = useState('all');
   const [posts, setPosts]         = useState([]);
   const [loading, setLoading]     = useState(true);
@@ -35,41 +39,41 @@ const Explore = () => {
     : posts.filter(p => p.type === categories.find(c => c.id === activeTab)?.match);
 
   return (
-    <div className="flex h-full animate-fade-in">
+    <main className={`${user ? 'lg:ml-64' : ''} h-screen pt-20 pb-20 md:pb-0 relative overflow-hidden flex animate-fade-in bg-[var(--color-background)]`}>
       <div className="flex-1 max-w-3xl w-full px-3 sm:px-5 lg:px-7 py-5 overflow-y-auto no-scrollbar">
 
         {/* Hero Banner */}
-        <div className="relative gradient-brand rounded-3xl p-5 sm:p-7 text-white mb-6 overflow-hidden shadow-glow-sm">
+        <div className="relative gradient-primary ghost-border rounded-3xl p-6 sm:p-8 text-[var(--color-on-surface)] mb-8 overflow-hidden glow-primary">
           {/* Decorative orbs */}
-          <div className="absolute -top-8 -right-8 w-32 h-32 bg-white/15 rounded-full blur-2xl pointer-events-none" />
-          <div className="absolute -bottom-6 left-12 w-24 h-24 bg-white/10 rounded-full blur-xl pointer-events-none" />
+          <div className="absolute -top-8 -right-8 w-32 h-32 bg-[var(--color-on-surface)]/10 rounded-full blur-2xl pointer-events-none" />
+          <div className="absolute -bottom-6 left-12 w-24 h-24 bg-[var(--color-on-surface)]/10 rounded-full blur-xl pointer-events-none" />
 
           <div className="relative z-10">
-            <span className="chip bg-white/20 text-white mb-3">✦ Discover</span>
-            <h1 className="font-display font-bold text-2xl sm:text-3xl mb-1.5 tracking-tight">
-              Explore your city 🧭
+            <span className="chip bg-[var(--color-on-surface)]/20 text-[var(--color-on-surface)] mb-4 label-text">✦ DISCOVER SECTOR</span>
+            <h1 className="font-display font-black text-3xl sm:text-4xl mb-2 tracking-tight">
+              SCAN GRID 🧭
             </h1>
-            <p className="text-primary-100/90 text-sm sm:text-base max-w-md leading-relaxed">
-              Hangout spots, viewpoints, cafés & more — curated by the community, for you.
+            <p className="text-[var(--color-on-surface)]/80 text-sm sm:text-base max-w-md leading-relaxed font-medium">
+              Hangout spots, viewpoints, cafés & more — triangulated by the community.
             </p>
           </div>
         </div>
 
         {/* Category pills */}
-        <div className="flex overflow-x-auto no-scrollbar gap-2 pb-1 mb-4 -mx-1 px-1 snap-x">
+        <div className="flex overflow-x-auto no-scrollbar gap-2 pb-2 mb-5 -mx-1 px-1 snap-x">
           {categories.map((cat) => {
             const isActive = activeTab === cat.id;
             return (
               <button
                 key={cat.id}
                 onClick={() => setActiveTab(cat.id)}
-                className={`flex items-center gap-1.5 whitespace-nowrap px-4 py-2 rounded-xl font-bold text-sm snap-start shrink-0 btn-press transition-all duration-200 ${
+                className={`flex items-center gap-2 whitespace-nowrap px-5 py-2.5 rounded-3xl font-bold text-xs tracking-wide label-text snap-start shrink-0 btn-press transition-all duration-200 ghost-border ${
                   isActive
-                    ? 'gradient-brand text-white shadow-glow-sm scale-[1.03]'
-                    : 'bg-white text-slate-600 border border-slate-200/80 hover:border-primary-300 hover:text-primary-600 hover:bg-primary-50 shadow-card'
+                    ? 'gradient-primary text-[var(--color-on-surface)] glow-primary scale-[1.03]'
+                    : 'bg-[var(--color-surface-container-highest)] text-[var(--color-on-surface-variant)] hover:border-[var(--color-primary)]/50 hover:text-[var(--color-on-surface)] hover:bg-[var(--color-surface-container-highest)]'
                 }`}
               >
-                <span>{cat.icon}</span>
+                <span className="text-sm">{cat.icon}</span>
                 {cat.name}
               </button>
             );
@@ -78,27 +82,27 @@ const Explore = () => {
 
         {/* Post count */}
         {!loading && (
-          <p className="text-xs font-semibold text-slate-400 mb-4 flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full gradient-brand inline-block" />
-            {filteredPosts.length} {filteredPosts.length === 1 ? 'spot' : 'spots'} found
+          <p className="label-text text-[10px] font-bold text-[var(--color-on-surface-variant)] mb-5 flex items-center gap-2 opacity-80">
+            <span className="w-1.5 h-1.5 rounded-full gradient-primary inline-block" />
+            {filteredPosts.length} {filteredPosts.length === 1 ? 'SIGNAL_FOUND' : 'SIGNALS_FOUND'}
           </p>
         )}
 
         {/* Posts / loading / empty */}
         {loading ? (
           <div className="flex justify-center py-24">
-            <Loader2 className="w-8 h-8 animate-spin text-primary-400" />
+            <Loader2 className="w-8 h-8 animate-spin text-[var(--color-primary)]" />
           </div>
         ) : filteredPosts.length === 0 ? (
-          <div className="text-center py-20 animate-fade-in">
-            <div className="text-5xl mb-4">{categories.find(c => c.id === activeTab)?.icon || '🗺'}</div>
-            <p className="font-display font-bold text-lg text-slate-700 mb-1">No spots yet</p>
-            <p className="text-sm text-slate-400">
-              Be the first to share a {activeTab !== 'all' ? categories.find(c => c.id === activeTab)?.name?.toLowerCase() : 'spot'}!
+          <div className="text-center py-24 animate-fade-in glass-panel ghost-border rounded-3xl">
+            <div className="text-5xl mb-5 opacity-80">{categories.find(c => c.id === activeTab)?.icon || '🗺'}</div>
+            <p className="font-display font-black text-xl text-[var(--color-on-surface)] mb-2 tracking-wide uppercase">NO SIGNALS MATCHING</p>
+            <p className="text-sm text-[var(--color-on-surface-variant)] font-medium">
+              Adjust filters or transmit a new {activeTab !== 'all' ? categories.find(c => c.id === activeTab)?.name?.toUpperCase() : 'SIGNAL'}.
             </p>
           </div>
         ) : (
-          <div className="space-y-4 pb-4">
+          <div className="space-y-6 pb-6 mt-2">
             {filteredPosts.map((post, i) => (
               <div key={post._id} className="animate-fade-in" style={{ animationDelay: `${i * 0.04}s` }}>
                 <PostCard
@@ -112,7 +116,7 @@ const Explore = () => {
           </div>
         )}
       </div>
-    </div>
+    </main>
   );
 };
 

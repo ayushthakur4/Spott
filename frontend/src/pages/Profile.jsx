@@ -14,10 +14,10 @@ const AVATAR_OPTIONS = [
 ];
 
 const getBadge = (score) => {
-  if (score >= 50) return { label: '🏆 Legend Scout',   bg: 'bg-amber-50  text-amber-600  border-amber-200'  };
-  if (score >= 20) return { label: '✅ Verified Guide', bg: 'bg-emerald-50 text-emerald-600 border-emerald-200' };
-  if (score >= 5)  return { label: '📍 Local Spotter',  bg: 'bg-primary-50 text-primary-600 border-primary-200' };
-  return               { label: '🌱 New Member',        bg: 'bg-slate-50   text-slate-600   border-slate-200'  };
+  if (score >= 50) return { label: '🏆 LEGEND SCOUT',   bg: 'bg-[var(--color-secondary)]/10 text-[var(--color-secondary)] border-[var(--color-secondary)]/20 shadow-[0_0_10px_rgba(254,148,0,0.1)]'  };
+  if (score >= 20) return { label: '✅ VERIFIED GUIDE', bg: 'bg-[var(--color-tertiary)]/10 text-[var(--color-tertiary)] border-[var(--color-tertiary)]/20 shadow-[0_0_10px_rgba(184,255,185,0.1)]' };
+  if (score >= 5)  return { label: '📍 LOCAL SPOTTER',  bg: 'bg-[var(--color-primary)]/10 text-[var(--color-primary)] border-[var(--color-primary)]/20 shadow-[0_0_10px_rgba(122,175,255,0.1)]' };
+  return               { label: '🌱 NEW SIGNAL',        bg: 'bg-[var(--color-surface-container-highest)] text-[var(--color-on-surface-variant)] border-[var(--color-outline-variant)]'  };
 };
 
 const Profile = () => {
@@ -33,17 +33,24 @@ const Profile = () => {
   const [selectedAvatar, setSelectedAvatar] = useState(null);
   const [saving, setSaving] = useState(false);
 
-  const isOwnProfile = currentUser?._id === id;
+  const targetId = id || currentUser?._id;
+  const isOwnProfile = currentUser?._id === targetId;
 
-  useEffect(() => { fetchProfile(); }, [id]);
+  useEffect(() => {
+    if (targetId) fetchProfile();
+    else if (currentUser === null) {
+      setError('Agent identity required. Please authenticate.');
+      setLoading(false);
+    }
+  }, [targetId, currentUser]);
 
   const fetchProfile = async () => {
     setLoading(true);
     try {
-      const { data } = await api.get(`/users/profile/${id}`);
+      const { data } = await api.get(`/users/profile/${targetId}`);
       setProfileData(data);
       setPosts(data.posts);
-    } catch { setError('Could not load profile.'); }
+    } catch { setError('Could not load profile or signals.'); }
     finally { setLoading(false); }
   };
 
@@ -58,115 +65,116 @@ const Profile = () => {
       setProfileData(prev => ({ ...prev, user: { ...prev.user, profileImage: res.data.profileImage } }));
       setEditingAvatar(false);
       setSelectedAvatar(null);
-    } catch { showAlert('Failed to update avatar', 'error'); }
+    } catch { showAlert('Failed to update avatar avatar', 'error'); }
     finally { setSaving(false); }
   };
 
   if (loading) return (
-    <div className="flex h-full items-center justify-center flex-col gap-3">
-      <Loader2 className="w-9 h-9 animate-spin text-primary-400" />
-      <p className="text-sm text-slate-400 font-medium">Loading profile…</p>
+    <div className="flex h-full items-center justify-center flex-col gap-5 bg-[var(--color-background)]">
+      <Loader2 className="w-12 h-12 animate-spin text-[var(--color-primary)] drop-shadow-[0_0_15px_rgba(122,175,255,0.5)]" />
+      <p className="label-text text-sm text-[var(--color-on-surface-variant)] animate-pulse">Scanning identity grid…</p>
     </div>
   );
   if (error) return (
-    <div className="flex h-full items-center justify-center text-red-500 font-medium">{error}</div>
+    <div className="flex h-full items-center justify-center text-[var(--color-error)] font-bold bg-[var(--color-background)]">{error}</div>
   );
 
   const { user, trustScore } = profileData;
   const badge = getBadge(trustScore);
 
   return (
-    <div className="max-w-2xl mx-auto px-3 sm:px-5 py-6 sm:py-8 animate-fade-in">
+    <main className={`${currentUser ? 'lg:ml-64' : ''} pt-20 pb-20 md:pb-0 relative animate-fade-in bg-[var(--color-background)] min-h-screen overflow-y-auto`}>
+      <div className="max-w-2xl mx-auto px-3 sm:px-5 py-6 sm:py-8">
       <AlertContainer />
 
       {/* ── Profile Card ── */}
-      <div className="bg-white rounded-3xl shadow-card border border-slate-200/70 overflow-hidden mb-6">
+      <div className="glass-panel ghost-border rounded-[2rem] overflow-hidden mb-8">
 
         {/* Cover with gradient + pattern */}
-        <div className="h-28 sm:h-36 gradient-brand relative overflow-hidden">
-          <div className="absolute inset-0 opacity-30"
-            style={{ backgroundImage: 'radial-gradient(circle at 15% 55%, rgba(255,255,255,.35) 0%, transparent 55%), radial-gradient(circle at 85% 15%, rgba(255,255,255,.2) 0%, transparent 45%)' }} />
+        <div className="h-32 sm:h-40 gradient-primary relative overflow-hidden glow-primary">
+          <div className="absolute inset-0 opacity-20"
+            style={{ backgroundImage: 'radial-gradient(circle at 15% 55%, var(--color-on-surface) 0%, transparent 55%), radial-gradient(circle at 85% 15%, var(--color-on-surface) 0%, transparent 45%)' }} />
           {/* Decorative rings */}
-          <div className="absolute -right-10 -top-10 w-40 h-40 border-2 border-white/20 rounded-full" />
-          <div className="absolute -right-4 -top-4 w-24 h-24 border border-white/15 rounded-full" />
+          <div className="absolute -right-10 -top-10 w-40 h-40 border-2 border-[var(--color-on-surface)]/10 rounded-full" />
+          <div className="absolute -right-4 -top-4 w-24 h-24 border border-[var(--color-on-surface)]/10 rounded-full" />
         </div>
 
-        <div className="px-5 sm:px-7 pb-6">
+        <div className="px-6 sm:px-8 pb-8">
           {/* Avatar row */}
-          <div className="flex items-end justify-between -mt-12 sm:-mt-14 mb-5">
+          <div className="flex items-end justify-between -mt-14 sm:-mt-16 mb-6">
             <div className="relative group">
-              <div className="absolute inset-0 gradient-brand rounded-2xl blur-md opacity-0 group-hover:opacity-40 transition-opacity duration-300 scale-110" />
+              <div className="absolute inset-0 gradient-primary rounded-3xl blur-md opacity-20 group-hover:opacity-60 transition-opacity duration-300 scale-110" />
               <img
                 src={user.profileImage}
                 alt={user.name}
-                className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border-4 border-white shadow-card object-cover bg-slate-100 z-10"
+                className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-3xl border-4 border-[var(--color-surface-container-low)] shadow-2xl object-cover bg-[var(--color-surface-container-highest)] z-10"
               />
               {isOwnProfile && (
                 <button
                   onClick={() => setEditingAvatar(true)}
-                  className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-200 z-20"
+                  className="absolute inset-0 flex items-center justify-center bg-[var(--color-background)]/60 rounded-3xl opacity-0 group-hover:opacity-100 transition-all duration-200 z-20 backdrop-blur-sm"
                 >
-                  <Pencil className="w-5 h-5 text-white" />
+                  <Pencil className="w-6 h-6 text-[var(--color-on-surface)]" />
                 </button>
               )}
             </div>
 
             {/* Stats row */}
-            <div className="flex gap-3 items-end pb-1">
-              <div className="text-center">
-                <p className="font-display font-bold text-lg text-slate-900 leading-none">{posts.length}</p>
-                <p className="text-xs text-slate-400 font-medium mt-0.5">Spots</p>
+            <div className="flex gap-4 items-end pb-2">
+              <div className="text-center bg-[var(--color-surface-container-highest)] ghost-border rounded-2xl px-4 py-2">
+                <p className="font-display font-black text-xl text-[var(--color-on-surface)] leading-none">{posts.length}</p>
+                <p className="label-text text-[10px] text-[var(--color-on-surface-variant)] mt-1">SIGNALS</p>
               </div>
-              <div className="text-center">
-                <p className="font-display font-bold text-lg text-primary-600 leading-none">{trustScore}</p>
-                <p className="text-xs text-slate-400 font-medium mt-0.5">Trust</p>
+              <div className="text-center bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/20 shadow-[0_0_15px_rgba(122,175,255,0.05)] rounded-2xl px-4 py-2">
+                <p className="font-display font-black text-xl text-[var(--color-primary)] leading-none">{trustScore}</p>
+                <p className="label-text text-[10px] text-[var(--color-primary)] mt-1">TRUST</p>
               </div>
             </div>
           </div>
 
           {/* Name & badges */}
-          <h1 className="font-display font-bold text-xl sm:text-2xl text-slate-900 tracking-tight mb-0.5">{user.name}</h1>
-          <p className="text-sm text-slate-400 mb-3">{user.email}</p>
+          <h1 className="font-display font-black text-2xl sm:text-3xl text-[var(--color-on-surface)] tracking-tight mb-1 uppercase">{user.name}</h1>
+          <p className="text-sm text-[var(--color-on-surface-variant)] mb-5 font-medium">{user.email}</p>
 
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className={`chip border ${badge.bg}`}>{badge.label}</span>
-            <span className="chip border bg-violet-50 text-violet-600 border-violet-200">
-              <Star className="w-3 h-3" /> Trust {trustScore}
+          <div className="flex items-center gap-3 flex-wrap">
+            <span className={`chip border label-text px-3 py-1.5 ${badge.bg}`}>{badge.label}</span>
+            <span className="chip bg-[var(--color-secondary)]/10 text-[var(--color-secondary)] border border-[var(--color-secondary)]/20 label-text px-3 py-1.5 shadow-[0_0_10px_rgba(254,148,0,0.1)]">
+              <Star className="w-3.5 h-3.5" /> TRUST {trustScore}
             </span>
           </div>
 
           {/* Avatar picker */}
           {editingAvatar && (
-            <div className="mt-5 p-4 bg-slate-50 border border-slate-200 rounded-2xl animate-pop-in">
-              <p className="text-sm font-bold text-slate-700 mb-3">Choose your avatar:</p>
-              <div className="flex gap-3 mb-4 flex-wrap">
+            <div className="mt-6 p-5 bg-[var(--color-surface-container-low)] ghost-border rounded-[2rem] animate-pop-in">
+              <p className="text-sm font-bold text-[var(--color-on-surface)] mb-4 label-text">CONFIGURE IDENTITY (AVATAR):</p>
+              <div className="flex gap-4 mb-5 flex-wrap">
                 {AVATAR_OPTIONS.map((url, i) => (
                   <button
                     key={i}
                     onClick={() => setSelectedAvatar(url)}
-                    className={`w-16 h-16 rounded-2xl border-2 overflow-hidden transition-all duration-200 btn-press ${
+                    className={`w-16 h-16 sm:w-20 sm:h-20 rounded-[1.5rem] border-2 overflow-hidden transition-all duration-200 btn-press ${
                       selectedAvatar === url
-                        ? 'border-primary-500 scale-110 shadow-glow-sm'
-                        : 'border-slate-200 hover:border-primary-300 hover:scale-105'
+                        ? 'border-[var(--color-primary)] scale-110 shadow-[0_0_15px_rgba(122,175,255,0.3)]'
+                        : 'border-[var(--color-outline-variant)] hover:border-[var(--color-primary)]/50 hover:scale-105'
                     }`}
                   >
-                    <img src={url} alt={`Avatar ${i + 1}`} className="w-full h-full object-cover bg-slate-100" />
+                    <img src={url} alt={`Avatar ${i + 1}`} className="w-full h-full object-cover bg-[var(--color-surface-container-highest)]" />
                   </button>
                 ))}
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 <button
                   onClick={handleSaveAvatar}
                   disabled={!selectedAvatar || saving}
-                  className="flex items-center gap-1.5 gradient-brand text-white px-4 py-2 rounded-xl text-sm font-bold disabled:opacity-50 transition-all duration-200 btn-press"
+                  className="flex items-center flex-1 justify-center gap-2 gradient-primary text-[var(--color-on-surface)] px-5 py-3 rounded-2xl text-sm font-bold disabled:opacity-50 disabled:grayscale transition-all duration-200 btn-press glow-primary label-text"
                 >
-                  <Check className="w-4 h-4" /> {saving ? 'Saving…' : 'Save'}
+                  <Check className="w-4 h-4" /> {saving ? 'SAVING…' : 'CONFIRM'}
                 </button>
                 <button
                   onClick={() => { setEditingAvatar(false); setSelectedAvatar(null); }}
-                  className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-200 btn-press"
+                  className="flex items-center flex-1 justify-center gap-2 bg-[var(--color-surface-container-highest)] hover:bg-[var(--color-outline-variant)] text-[var(--color-on-surface)] px-5 py-3 rounded-2xl text-sm font-bold transition-all duration-200 btn-press ghost-border label-text"
                 >
-                  <X className="w-4 h-4" /> Cancel
+                  <X className="w-4 h-4" /> ABORT
                 </button>
               </div>
             </div>
@@ -175,22 +183,22 @@ const Profile = () => {
       </div>
 
       {/* ── Posts section ── */}
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="font-display font-bold text-lg text-slate-900 flex items-center gap-2">
-          <MapPin className="w-5 h-5 text-primary-500" />
-          Posts by {user.name.split(' ')[0]}
+      <div className="flex items-center justify-between mb-5 px-1">
+        <h2 className="font-display font-black text-xl text-[var(--color-on-surface)] flex items-center gap-2 uppercase tracking-wide">
+          <MapPin className="w-5 h-5 text-[var(--color-primary)]" />
+          SIGNALS BY {user.name.split(' ')[0]}
         </h2>
-        <span className="chip bg-primary-50 text-primary-600 border border-primary-100">
-          {posts.length} total
+        <span className="chip label-text bg-[var(--color-surface-container-highest)] text-[var(--color-on-surface-variant)] ghost-border px-3 py-1">
+          {posts.length} LOGGED
         </span>
       </div>
 
-      <div className="space-y-4 pb-20">
+      <div className="space-y-6 pb-20">
         {posts.length === 0 ? (
-          <div className="text-center py-16 animate-fade-in">
-            <div className="text-5xl mb-4">📭</div>
-            <p className="font-display font-bold text-slate-700">No posts yet</p>
-            {isOwnProfile && <p className="text-sm text-slate-400 mt-1">Share your first spot!</p>}
+          <div className="text-center py-20 animate-fade-in glass-panel ghost-border rounded-[2rem]">
+            <div className="text-5xl mb-5 opacity-70">📭</div>
+            <p className="font-display font-black text-lg text-[var(--color-on-surface)] tracking-widest uppercase">No Intel Found</p>
+            {isOwnProfile && <p className="text-sm text-[var(--color-on-surface-variant)] mt-2 font-medium">Transmit your first spot to the grid!</p>}
           </div>
         ) : (
           posts.map((post, i) => (
@@ -205,7 +213,8 @@ const Profile = () => {
           ))
         )}
       </div>
-    </div>
+      </div>
+    </main>
   );
 };
 

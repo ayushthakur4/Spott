@@ -2,17 +2,17 @@ import { useEffect, useState } from 'react';
 import { CheckCircle2, XCircle, AlertTriangle, Info, X } from 'lucide-react';
 
 const ICONS = {
-  success: <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />,
-  error:   <XCircle      className="w-5 h-5 text-red-500    shrink-0" />,
-  warning: <AlertTriangle className="w-5 h-5 text-amber-500  shrink-0" />,
-  info:    <Info          className="w-5 h-5 text-blue-500   shrink-0" />,
+  success: <CheckCircle2 className="w-5 h-5 text-[var(--color-tertiary)] shrink-0" />,
+  error:   <XCircle      className="w-5 h-5 text-[var(--color-error)]    shrink-0" />,
+  warning: <AlertTriangle className="w-5 h-5 text-[var(--color-secondary)]  shrink-0" />,
+  info:    <Info          className="w-5 h-5 text-[var(--color-primary)]   shrink-0" />,
 };
 
 const STYLES = {
-  success: 'bg-emerald-50 border-emerald-300 text-emerald-800',
-  error:   'bg-red-50    border-red-300    text-red-800',
-  warning: 'bg-amber-50  border-amber-300  text-amber-800',
-  info:    'bg-blue-50   border-blue-300   text-blue-800',
+  success: 'bg-[var(--color-tertiary)]/10 border border-[var(--color-tertiary)]/20 text-[var(--color-tertiary)] shadow-[0_0_15px_rgba(184,255,185,0.1)]',
+  error:   'bg-[var(--color-error)]/10 border border-[var(--color-error)]/20 text-[var(--color-error)] shadow-[0_0_15px_rgba(255,113,108,0.1)] animate-alert-pulse',
+  warning: 'bg-[var(--color-secondary)]/10 border border-[var(--color-secondary)]/20 text-[var(--color-secondary)] shadow-[0_0_15px_rgba(254,148,0,0.1)]',
+  info:    'bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/20 text-[var(--color-primary)] shadow-[0_0_15px_rgba(122,175,255,0.1)]',
 };
 
 /**
@@ -54,8 +54,8 @@ const CustomAlert = ({ message, type = 'info', duration = 3500, onClose }) => {
         transform:  visible ? 'translateY(0)' : 'translateY(-12px)',
       }}
       className={`
-        flex items-start gap-3 px-4 py-3 rounded-2xl border shadow-lg
-        pointer-events-auto max-w-sm w-full
+        flex items-start gap-3 px-4 py-3 rounded-2xl
+        pointer-events-auto max-w-sm w-full backdrop-blur-xl
         ${STYLES[type] || STYLES.info}
       `}
       role="alert"

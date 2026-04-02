@@ -26,29 +26,29 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row animate-fade-in">
+    <main className="pt-20 pb-20 md:pb-0 min-h-screen flex flex-col lg:flex-row animate-fade-in bg-[var(--color-background)] relative overflow-hidden">
 
       {/* ── Left decorative panel (desktop only) ── */}
-      <div className="hidden lg:flex lg:w-1/2 xl:w-[55%] gradient-brand relative overflow-hidden flex-col items-center justify-center p-12 text-white">
-        <div className="absolute -top-24 -left-24 w-80 h-80 bg-white/10 rounded-full blur-3xl" />
-        <div className="absolute -bottom-16 -right-12 w-64 h-64 bg-primary-700/40 rounded-full blur-2xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary-400/15 rounded-full blur-3xl" />
+      <div className="hidden lg:flex lg:w-1/2 xl:w-[55%] gradient-primary ghost-border relative overflow-hidden flex-col items-center justify-center p-12 text-[var(--color-on-surface)]">
+        <div className="absolute -top-24 -left-24 w-80 h-80 bg-[var(--color-on-surface)]/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-16 -right-12 w-64 h-64 bg-[var(--color-primary)]/30 rounded-full blur-2xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[var(--color-primary)]/10 rounded-full blur-3xl glow-primary" />
 
         <div className="relative z-10 text-center max-w-sm">
           <div className="relative flex justify-center mb-6">
-            <div className="absolute inset-0 bg-white/20 blur-2xl rounded-full scale-150" />
-            <img src={logo} alt="Spott" className="relative h-20 w-auto object-contain drop-shadow-xl z-10" />
+            <div className="absolute inset-0 bg-[var(--color-on-surface)]/10 blur-2xl rounded-full scale-150" />
+            <img src={logo} alt="Spott" className="relative h-20 w-auto object-contain drop-shadow-xl z-10 invert brightness-200 sepia-[1] hue-rotate-180 saturate-[3] drop-shadow-[0_0_10px_rgba(122,175,255,0.8)]" />
           </div>
-          <h1 className="font-display font-bold text-4xl xl:text-5xl mb-3 tracking-tight leading-tight">
-            Spot it.<br />Share it.<br />Own it. ✦
+          <h1 className="font-display font-black text-4xl xl:text-5xl mb-4 tracking-tight leading-tight uppercase">
+            SPOT IT.<br />SHARE IT.<br />OWN IT. ✦
           </h1>
-          <p className="text-primary-100/80 text-base leading-relaxed">
-            Become a verified spotter. Build your reputation and help others discover what's real, raw & local.
+          <p className="text-[var(--color-on-surface)]/80 text-base leading-relaxed font-medium">
+            Register your identity. Build trust and help the network discover what's real, raw & local.
           </p>
 
           <div className="flex justify-center gap-3 mt-8 flex-wrap">
-            {['⭐ Trust Score', '🏅 Badges', '📍 Spot History', '💬 Comments'].map(s => (
-              <span key={s} className="bg-white/15 backdrop-blur-sm text-white text-xs font-bold px-3 py-1.5 rounded-full border border-white/20">
+            {['⭐ TRUST SCORE', '🏅 CLEARANCE LEVEL', '📍 SPOT LOG', '💬 ENCRYPTED COMMS'].map(s => (
+              <span key={s} className="bg-[var(--color-surface-container-low)]/50 backdrop-blur-md text-[var(--color-on-surface)] label-text px-4 py-2 rounded-2xl border border-[var(--color-outline-variant)]">
                 {s}
               </span>
             ))}
@@ -57,59 +57,62 @@ const Register = () => {
       </div>
 
       {/* ── Right form panel ── */}
-      <div className="flex-1 flex flex-col items-center justify-center px-5 sm:px-8 py-12" style={{ background: '#f0f6ff' }}>
+      <div className="flex-1 flex flex-col items-center justify-center px-5 sm:px-8 py-12 bg-[var(--color-background)] relative">
+        <div className="absolute inset-0 bg-[var(--color-surface-container-low)] pointer-events-none rounded-l-[3rem] shadow-[inset_10px_0_20px_rgba(0,0,0,0.5)] hidden lg:block" />
 
         {/* Mobile logo */}
-        <div className="lg:hidden flex flex-col items-center mb-8">
+        <div className="lg:hidden flex flex-col items-center mb-8 relative z-10">
           <div className="relative mb-2">
-            <div className="absolute inset-0 bg-primary-400/30 blur-xl rounded-full scale-150" />
-            <img src={logo} alt="Spott" className="relative h-14 w-auto object-contain z-10" />
+            <div className="absolute inset-0 gradient-primary opacity-30 blur-xl rounded-full scale-150 glow-primary" />
+            <img src={logo} alt="Spott" className="relative h-16 w-auto object-contain z-10 invert brightness-200 sepia-[1] hue-rotate-180 saturate-[3] drop-shadow-[0_0_10px_rgba(122,175,255,0.8)]" />
           </div>
-          <span className="font-display font-bold text-2xl text-gradient tracking-tight">Spott</span>
+          <span className="font-display font-black text-2xl text-[var(--color-primary)] tracking-widest uppercase mt-2">SYS.REGISTER</span>
         </div>
 
-        <div className="w-full max-w-sm">
-          <h2 className="font-display font-bold text-2xl sm:text-3xl text-slate-900 mb-1 tracking-tight">
-            Join the community 🚀
-          </h2>
-          <p className="text-slate-500 text-sm mb-7">Start sharing spots in your area.</p>
+        <div className="w-full max-w-sm relative z-10">
+          <div className="hidden lg:block">
+            <h2 className="font-display font-black text-2xl sm:text-3xl text-[var(--color-on-surface)] mb-1 tracking-tight uppercase">
+              JOIN NETWORK 🚀
+            </h2>
+            <p className="text-[var(--color-on-surface-variant)] text-sm mb-7 font-medium">Initialize new agent profile.</p>
+          </div>
 
-          <div className="bg-white rounded-3xl shadow-card border border-slate-200/70 p-6 sm:p-8">
+          <div className="glass-panel ghost-border rounded-3xl p-6 sm:p-8 relative">
             <form onSubmit={handleSubmit} className="space-y-4">
               {error && (
-                <div className="flex items-center gap-2.5 bg-red-50 border border-red-100 text-red-600 px-4 py-3 rounded-2xl text-sm font-medium">
-                  <span className="w-1.5 h-1.5 bg-red-500 rounded-full shrink-0" /> {error}
+                <div className="flex items-center gap-3 bg-[var(--color-error)]/10 border border-[var(--color-error)]/20 text-[var(--color-error)] px-4 py-3 rounded-2xl text-sm font-bold animate-alert-pulse">
+                  <span className="w-2 h-2 bg-[var(--color-error)] rounded-full shrink-0" /> {error}
                 </div>
               )}
 
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Full Name</label>
+                <label className="block text-xs font-bold text-[var(--color-on-surface-variant)] label-text mb-2 opacity-80">AGENT DESIGNATION (FULL NAME)</label>
                 <input
                   name="name"
                   type="text"
                   required
                   value={formData.name}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-medium placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-primary-400 transition-all"
-                  placeholder="Your name"
+                  className="w-full px-5 py-3 bg-[var(--color-surface-container-highest)] ghost-border rounded-2xl text-sm font-medium placeholder:text-[var(--color-on-surface-variant)]/40 text-[var(--color-on-surface)] focus:outline-none focus:border-[var(--color-primary)] transition-all"
+                  placeholder="AGENT ZERO"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Email</label>
+                <label className="block text-xs font-bold text-[var(--color-on-surface-variant)] label-text mb-2 opacity-80">AGENT IDENTIFIER (EMAIL)</label>
                 <input
                   name="email"
                   type="email"
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-medium placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-primary-400 transition-all"
-                  placeholder="you@example.com"
+                  className="w-full px-5 py-3 bg-[var(--color-surface-container-highest)] ghost-border rounded-2xl text-sm font-medium placeholder:text-[var(--color-on-surface-variant)]/40 text-[var(--color-on-surface)] focus:outline-none focus:border-[var(--color-primary)] transition-all"
+                  placeholder="agent@example.com"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Password</label>
+                <label className="block text-xs font-bold text-[var(--color-on-surface-variant)] label-text mb-2 opacity-80">ACCESS SUBROUTINE (PASSWORD)</label>
                 <div className="relative">
                   <input
                     name="password"
@@ -117,13 +120,13 @@ const Register = () => {
                     required
                     value={formData.password}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 pr-11 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-medium placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-primary-400 transition-all"
-                    placeholder="min. 6 characters"
+                    className="w-full px-5 py-3 pr-12 bg-[var(--color-surface-container-highest)] ghost-border rounded-2xl text-sm font-medium placeholder:text-[var(--color-on-surface-variant)]/40 text-[var(--color-on-surface)] focus:outline-none focus:border-[var(--color-primary)] transition-all"
+                    placeholder="MIN. 6 CYCLES"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPw(v => !v)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1 transition"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] p-2 transition-colors btn-press"
                   >
                     {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -133,32 +136,32 @@ const Register = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full gradient-brand text-white font-bold py-3 rounded-2xl shadow-glow-sm hover:shadow-glow transition-all duration-200 btn-press disabled:opacity-50 flex items-center justify-center gap-2 text-sm"
+                className="w-full gradient-primary text-[var(--color-on-surface)] font-bold py-3.5 rounded-2xl glow-primary hover:shadow-[0_0_20px_rgba(122,175,255,0.4)] transition-all duration-300 btn-press disabled:opacity-50 disabled:grayscale flex items-center justify-center gap-2 text-sm tracking-wide mt-2"
               >
-                {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Create account →'}
+                {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : 'REGISTER IDENTITY →'}
               </button>
             </form>
 
-            <div className="flex items-center gap-3 my-5">
-              <div className="flex-1 h-px bg-slate-200" />
-              <span className="text-xs text-slate-400 font-medium">Already a spotter?</span>
-              <div className="flex-1 h-px bg-slate-200" />
+            <div className="flex items-center gap-3 my-6">
+              <div className="flex-1 h-px bg-[var(--color-outline-variant)]" />
+              <span className="text-xs text-[var(--color-on-surface-variant)] font-bold label-text opacity-60">ALREADY LOGGED?</span>
+              <div className="flex-1 h-px bg-[var(--color-outline-variant)]" />
             </div>
 
             <Link
               to="/login"
-              className="w-full flex items-center justify-center gap-2 py-3 border-2 border-slate-200 rounded-2xl text-sm font-bold text-slate-700 hover:border-primary-300 hover:bg-primary-50 hover:text-primary-600 transition-all duration-200 btn-press"
+              className="w-full flex items-center justify-center gap-2 py-3 border border-[var(--color-outline-variant)] rounded-2xl text-sm font-bold text-[var(--color-on-surface-variant)] hover:border-[var(--color-primary)]/50 hover:bg-[var(--color-surface-container-highest)] hover:text-[var(--color-on-surface)] transition-all duration-200 btn-press uppercase tracking-wide"
             >
-              Log in instead <ArrowRight className="w-4 h-4" />
+              Resume Setup <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
 
-          <p className="text-center text-xs text-slate-400 mt-6">
-            © {new Date().getFullYear()} <span className="font-semibold">Ayush Thakur</span>
+          <p className="text-center text-[10px] text-[var(--color-on-surface-variant)] mt-8 label-text opacity-50 uppercase tracking-widest">
+            © {new Date().getFullYear()} Ayush Thakur · SECURE COMMS
           </p>
         </div>
       </div>
-    </div>
+    </main>
   );
 };
 
