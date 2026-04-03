@@ -217,3 +217,24 @@ h1, h2 {
 .pb-safe { padding-bottom: max(env(safe-area-inset-bottom), 0.5rem); }
 .btn-press { transition: transform .15s ease; }
 .btn-press:active { transform: scale(.95); }
+
+.z-100 { z-index: 100; }
+
+/* Custom Category Select */
+.category-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%237aafff' stroke-width='3'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5' /%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
+  padding-right: 2.5rem !important;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; filter: drop-shadow(0 0 10px rgba(122, 175, 255, 0.4)); }
+  50%      { opacity: 0.8; filter: drop-shadow(0 0 20px rgba(122, 175, 255, 0.6)); }
+}

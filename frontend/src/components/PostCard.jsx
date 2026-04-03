@@ -16,7 +16,7 @@ const getTagStyles = (type) => {
   return 'bg-[var(--color-tertiary)]/10 text-[var(--color-tertiary)] border border-[var(--color-tertiary)]/20';
 };
 
-const PostCard = ({ post, onVote, onComment, onDelete }) => {
+const PostCard = ({ post, onVote, onComment, onDelete, compact = false }) => {
   const { user } = useContext(AuthContext);
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState('');
@@ -96,38 +96,38 @@ const PostCard = ({ post, onVote, onComment, onDelete }) => {
   return (
     <article className="bg-[var(--color-surface-container-low)] rounded-3xl ghost-border overflow-hidden hover:bg-[var(--color-surface-container-high)] transition-colors duration-300 group/card">
       <div className="flex">
-
-        {/* ── Vote sidebar ── */}
-        <div className="w-11 sm:w-13 shrink-0 flex flex-col items-center gap-0.5 py-4 px-2">
-          <button
-            onClick={handleUpvote}
-            className={`p-2 rounded-2xl transition-all duration-200 btn-press ${
-              isUpvoted
-                ? 'gradient-primary text-[var(--color-on-surface)] glow-primary'
-                : 'text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-container-highest)] hover:text-[var(--color-primary)]'
-            }`}
-          >
-            <ChevronUp className="w-5 h-5" strokeWidth={2.5} />
-          </button>
-          <span className={`font-display font-bold text-sm leading-none py-1.5 ${
-            isUpvoted ? 'text-[var(--color-primary)]' : isDownvoted ? 'text-[var(--color-error)]' : 'text-[var(--color-on-surface-variant)]'
-          }`}>
-            {voteCount}
-          </span>
-          <button
-            onClick={handleDownvote}
-            className={`p-2 rounded-2xl transition-all duration-200 btn-press ${
-              isDownvoted
-                ? 'bg-[var(--color-error)]/20 text-[var(--color-error)]'
-                : 'text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-container-highest)] hover:text-[var(--color-error)]'
-            }`}
-          >
-            <ChevronDown className="w-5 h-5" strokeWidth={2.5} />
-          </button>
-        </div>
+        {!compact && (
+          <div className="w-11 sm:w-13 shrink-0 flex flex-col items-center gap-0.5 py-4 px-2">
+            <button
+              onClick={handleUpvote}
+              className={`p-2 rounded-2xl transition-all duration-200 btn-press ${
+                isUpvoted
+                  ? 'gradient-primary text-[var(--color-on-surface)] glow-primary'
+                  : 'text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-container-highest)] hover:text-[var(--color-primary)]'
+              }`}
+            >
+              <ChevronUp className="w-5 h-5" strokeWidth={2.5} />
+            </button>
+            <span className={`font-display font-bold text-sm leading-none py-1.5 ${
+              isUpvoted ? 'text-[var(--color-primary)]' : isDownvoted ? 'text-[var(--color-error)]' : 'text-[var(--color-on-surface-variant)]'
+            }`}>
+              {voteCount}
+            </span>
+            <button
+              onClick={handleDownvote}
+              className={`p-2 rounded-2xl transition-all duration-200 btn-press ${
+                isDownvoted
+                  ? 'bg-[var(--color-error)]/20 text-[var(--color-error)]'
+                  : 'text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-container-highest)] hover:text-[var(--color-error)]'
+              }`}
+            >
+              <ChevronDown className="w-5 h-5" strokeWidth={2.5} />
+            </button>
+          </div>
+        )}
 
         {/* ── Content ── */}
-        <div className="flex-1 p-4 sm:p-5 min-w-0">
+        <div className={`flex-1 min-w-0 ${compact ? 'p-3' : 'p-4 sm:p-5'}`}>
 
           {/* Header */}
           <div className="flex items-start justify-between gap-2 mb-3">
@@ -136,24 +136,24 @@ const PostCard = ({ post, onVote, onComment, onDelete }) => {
                 <img
                   src={post.user?.profileImage}
                   alt="User"
-                  className="w-10 h-10 rounded-full border-2 border-[var(--color-surface-container-highest)] object-cover hover:border-[var(--color-primary)] transition-colors"
+                  className={`${compact ? 'w-8 h-8' : 'w-10 h-10'} rounded-full border-2 border-[var(--color-surface-container-highest)] object-cover hover:border-[var(--color-primary)] transition-colors`}
                 />
               </Link>
               <div className="min-w-0">
                 <Link to={`/profile/${post.user?._id}`}>
-                  <p className="text-sm font-bold text-[var(--color-on-surface)] hover:text-[var(--color-primary)] transition truncate">{post.user?.name}</p>
+                  <p className={`${compact ? 'text-[12px]' : 'text-sm'} font-bold text-[var(--color-on-surface)] hover:text-[var(--color-primary)] transition truncate`}>{post.user?.name}</p>
                 </Link>
-                <p className="text-[11px] label-text text-[var(--color-on-surface-variant)] truncate mt-0.5">
+                <p className={`${compact ? 'text-[9px]' : 'text-[11px]'} label-text text-[var(--color-on-surface-variant)] truncate mt-0.5`}>
                   {new Date(post.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
                   {(post.locationName || post.location) && (
                     <>
-                      <span className="mx-1.5 opacity-50">•</span>
-                      NEAR <span className="font-bold text-[var(--color-on-surface-variant)]">{post.locationName || 'THIS SPOT'}</span>
+                      <span className="mx-1 opacity-50">•</span>
+                      NEAR <span className="font-bold text-[var(--color-on-surface-variant)]">{post.locationName || 'LOCATION'}</span>
                     </>
                   )}
                 </p>
               </div>
-              <span className={`chip ml-1 shrink-0 ${tagStyles}`}>{post.type}</span>
+              <span className={`chip ml-1 shrink-0 ${compact ? 'text-[9px] px-2 py-0.5' : ''} ${tagStyles}`}>{post.type}</span>
             </div>
 
             {/* Quick actions */}
@@ -187,18 +187,18 @@ const PostCard = ({ post, onVote, onComment, onDelete }) => {
           </div>
 
           {/* Body */}
-          <p className="text-[var(--color-on-surface-variant)] text-sm sm:text-[15px] leading-relaxed mb-4 font-medium px-1">
+          <p className={`${compact ? 'text-xs' : 'text-sm sm:text-[15px]'} text-[var(--color-on-surface-variant)] leading-relaxed mb-3 font-medium px-1`}>
             {post.description}
           </p>
 
-          {post.image && (
+          {post.image && !compact && (
             <div className="rounded-2xl overflow-hidden bg-[var(--color-background)] mb-4 ghost-border">
               <img src={post.image} alt="Post" className="w-full h-auto max-h-80 object-cover" loading="lazy" />
             </div>
           )}
 
-          {/* Location Name (Footer) */}
-          {(post.locationName || post.location) && (
+          {/* Location Name (Footer) - Hidden in compact if not needed */}
+          {(post.locationName || post.location) && !compact && (
             <div className="flex items-center gap-2 mb-4 px-1 p-3 rounded-2xl border border-transparent hover:border-[var(--color-outline-variant)] hover:bg-[var(--color-surface-container-highest)] transition-colors w-max">
               <MapPin className="w-4 h-4 text-[var(--color-primary)] shrink-0" />
               <p className="text-sm font-bold text-[var(--color-on-surface)] tracking-tight">
@@ -208,27 +208,29 @@ const PostCard = ({ post, onVote, onComment, onDelete }) => {
           )}
 
           {/* Footer actions */}
-          <div className="flex items-center gap-2 pt-3 border-t border-[var(--color-outline-variant)] opacity-80 mt-2 overflow-x-auto no-scrollbar">
+          <div className={`flex items-center gap-2 border-t border-[var(--color-outline-variant)] opacity-90 mt-1 ${compact ? 'pt-2' : 'pt-3 mt-2'} overflow-x-auto no-scrollbar`}>
             <button
               onClick={() => setShowComments(!showComments)}
-              className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] hover:bg-[var(--color-surface-container-highest)] px-3 py-2 rounded-2xl transition-all duration-200 shrink-0"
+              className={`flex items-center gap-1.5 font-semibold text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] hover:bg-[var(--color-surface-container-highest)] px-2.5 py-1.5 rounded-xl transition-all duration-200 shrink-0 ${compact ? 'text-[10px]' : 'text-xs sm:text-sm'}`}
             >
-              <MessageSquare className="w-4 h-4" />
+              <MessageSquare className={`${compact ? 'w-3.5 h-3.5' : 'w-4 h-4'}`} />
               <span>{post.comments?.length || 0}</span>
-              <span className="hidden sm:inline label-text ml-1 opacity-70">Comments</span>
+              {!compact && <span className="hidden sm:inline label-text ml-1 opacity-70">Comments</span>}
             </button>
 
-            <button
-              onClick={handleShare}
-              className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] hover:bg-[var(--color-surface-container-highest)] px-3 py-2 rounded-2xl transition-all duration-200 shrink-0"
-            >
-              <Share2 className="w-4 h-4" />
-              <span className="hidden sm:inline label-text opacity-70">Share</span>
-            </button>
+            {!compact && (
+              <button
+                onClick={handleShare}
+                className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] hover:bg-[var(--color-surface-container-highest)] px-3 py-2 rounded-2xl transition-all duration-200 shrink-0"
+              >
+                <Share2 className="w-4 h-4" />
+                <span className="hidden sm:inline label-text opacity-70">Share</span>
+              </button>
+            )}
 
             <div className="flex-1" />
 
-            {post.location ? (
+            {post.location && !compact ? (
               <a
                 href={`https://www.google.com/maps/dir/?api=1&destination=${post.location.lat},${post.location.lng}`}
                 target="_blank"
@@ -238,11 +240,12 @@ const PostCard = ({ post, onVote, onComment, onDelete }) => {
                 <Navigation className="w-3.5 h-3.5" />
                 <span className="label-text">Navigate</span>
               </a>
-            ) : (
-              <span className="flex items-center gap-1 text-xs font-bold text-[var(--color-primary)] bg-[var(--color-primary)]/10 px-3 py-2 rounded-2xl border border-[var(--color-primary)]/20 shrink-0">
-                <MapPin className="w-3.5 h-3.5" /> Tagged
-              </span>
-            )}
+            ) : compact && post.location ? (
+               <button onClick={handleUpvote} className={`flex items-center gap-1 font-bold px-3 py-1.5 rounded-xl transition-all ${isUpvoted ? 'bg-[var(--color-primary)]/20 text-[var(--color-primary)]' : 'text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-container-highest)]'} text-[10px]`}>
+                 <ChevronUp className="w-3.5 h-3.5" />
+                 {voteCount}
+               </button>
+            ) : null}
           </div>
 
           {/* Comments section */}
