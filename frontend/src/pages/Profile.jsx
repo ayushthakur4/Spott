@@ -83,7 +83,7 @@ const Profile = () => {
   const badge = getBadge(trustScore);
 
   return (
-    <main className={`${currentUser ? 'lg:ml-64' : ''} pt-20 pb-20 md:pb-0 relative animate-fade-in bg-[var(--color-background)] min-h-screen overflow-y-auto`}>
+    <main className={`${currentUser ? 'lg:ml-64' : ''} min-h-screen-nav pt-[var(--navbar-height)] pb-[var(--bottom-nav-height)] md:pb-0 relative animate-fade-in bg-[var(--color-background)]`}>
       <div className="max-w-2xl mx-auto px-3 sm:px-5 py-6 sm:py-8">
       <AlertContainer />
 

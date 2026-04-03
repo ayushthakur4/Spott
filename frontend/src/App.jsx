@@ -16,7 +16,7 @@ function App() {
   return (
     <Router>
       <AuthProvider>
-        <div className="bg-[var(--color-background)] text-[var(--color-on-surface)] min-h-screen font-['Inter'] overflow-hidden">
+        <div className="bg-[var(--color-background)] text-[var(--color-on-surface)] min-h-screen font-['Inter'] relative">
           
           <Navbar />
           <Sidebar setIsCreateModalOpen={setIsCreateModalOpen} />

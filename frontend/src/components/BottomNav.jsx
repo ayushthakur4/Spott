@@ -12,7 +12,7 @@ const BottomNav = ({ setIsCreateModalOpen }) => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <nav className="md:hidden fixed bottom-0 w-full bg-[#0e0e0e]/90 backdrop-blur-xl border-t border-white/5 z-50 flex justify-around items-center py-3 px-4 pb-safe">
+    <nav className="md:hidden fixed bottom-0 w-full bg-[#0e0e0e]/90 backdrop-blur-xl border-t border-white/5 z-50 flex justify-around items-center h-[var(--bottom-nav-height)] px-4 pb-safe">
       <Link to="/" className={`flex flex-col items-center gap-1 ${isActive('/') ? 'text-[var(--color-primary)]' : 'text-[var(--color-on-surface-variant)]'}`}>
         <span className="material-symbols-outlined" data-icon="home">home</span>
         <span className={`text-[10px] ${isActive('/') ? 'font-bold' : ''}`}>Home</span>

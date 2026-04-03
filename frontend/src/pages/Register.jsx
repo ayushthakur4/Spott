@@ -26,7 +26,7 @@ const Register = () => {
   };
 
   return (
-    <main className="pt-20 pb-20 md:pb-0 min-h-screen flex flex-col lg:flex-row animate-fade-in bg-[var(--color-background)] relative overflow-hidden">
+    <main className="pt-[var(--navbar-height)] pb-[var(--bottom-nav-height)] lg:pb-0 min-h-screen-nav flex flex-col lg:flex-row animate-fade-in bg-[var(--color-background)] relative">
 
       {/* ── Left decorative panel (desktop only) ── */}
       <div className="hidden lg:flex lg:w-1/2 xl:w-[55%] gradient-primary ghost-border relative overflow-hidden flex-col items-center justify-center p-12 text-[var(--color-on-surface)]">

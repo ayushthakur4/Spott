@@ -53,7 +53,7 @@ const Home = ({ isCreateModalOpen, setIsCreateModalOpen }) => {
   );
 
   return (
-    <main className={`${user ? 'lg:ml-64' : ''} h-screen pt-20 relative overflow-hidden bg-[#0e0e0e]`}>
+    <main className={`${user ? 'lg:ml-64' : ''} h-screen-nav mt-[var(--navbar-height)] relative overflow-hidden bg-[#0e0e0e]`}>
       
       {/* Interactive Map Background */}
       <div className="absolute inset-0 z-0 bg-[#0e0e0e]">
@@ -64,7 +64,7 @@ const Home = ({ isCreateModalOpen, setIsCreateModalOpen }) => {
       </div>
 
       {/* Right Side Panel: Nearby Alerts */}
-      <div className="absolute right-0 md:right-6 top-20 bottom-[80px] md:bottom-6 w-full md:w-[420px] z-20 flex flex-col gap-6 px-4 md:px-0 pointer-events-none">
+      <div className="absolute right-0 md:right-6 top-6 bottom-[calc(var(--bottom-nav-height)+1rem)] md:bottom-6 w-full md:w-[420px] z-20 flex flex-col gap-6 px-4 md:px-0 pointer-events-none">
         
         <div className="bg-[var(--color-surface-container-low)]/80 backdrop-blur-xl rounded-xl p-4 md:p-6 specular-edge shadow-2xl border border-white/5 h-full flex flex-col pointer-events-auto">
           <div className="flex items-center justify-between mb-6 shrink-0">

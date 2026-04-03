@@ -17,7 +17,7 @@ const Sidebar = ({ setIsCreateModalOpen }) => {
   };
 
   return (
-    <aside className="h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col bg-[var(--color-surface-container-low)] shadow-2xl shadow-black font-['Inter'] tracking-tight z-40 pt-24">
+    <aside className="h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col bg-[var(--color-surface-container-low)] shadow-2xl shadow-black font-['Inter'] tracking-tight z-40 pt-[var(--navbar-height)]">
       <div className="flex flex-col p-6 space-y-8 h-full">
         
         <div className="space-y-1">

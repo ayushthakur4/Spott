@@ -66,8 +66,8 @@ const Explore = () => {
       : posts.filter(p => p.type === activeCat?.match);
 
   return (
-    <main className={`${user ? 'lg:ml-64' : ''} h-screen pt-20 pb-20 md:pb-0 relative overflow-hidden flex animate-fade-in bg-[var(--color-background)]`}>
-      <div className="flex-1 max-w-3xl w-full px-3 sm:px-5 lg:px-7 py-5 overflow-y-auto no-scrollbar">
+    <main className={`${user ? 'lg:ml-64' : ''} min-h-screen-nav pt-[var(--navbar-height)] pb-[var(--bottom-nav-height)] md:pb-0 relative flex animate-fade-in bg-[var(--color-background)]`}>
+      <div className="flex-1 max-w-3xl w-full px-3 sm:px-5 lg:px-7 py-5">
 
         {/* Hero Banner */}
         <div className="relative gradient-primary ghost-border rounded-3xl p-6 sm:p-8 text-[var(--color-on-surface)] mb-8 overflow-hidden glow-primary">

@@ -55,6 +55,12 @@
   --color-tertiary-container: #6ffb85;
   --color-tertiary-dim: #60ec79;
   --color-outline-variant: #494847;
+
+  /* ═══════════════════════════════════════════
+     DYNAMIC LAYOUT TOKENS
+  ═══════════════════════════════════════════ */
+  --navbar-height: 72px;
+  --bottom-nav-height: 72px;
 }
 
 /* ═══════════════════════════════════════════
@@ -76,7 +82,13 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   padding-bottom: env(safe-area-inset-bottom);
+  overflow-x: hidden;
 }
+
+.pt-nav { padding-top: var(--navbar-height); }
+.pb-nav { padding-bottom: var(--bottom-nav-height); }
+.min-h-screen-nav { min-height: calc(100dvh - var(--navbar-height)); }
+.h-screen-nav { height: calc(100dvh - var(--navbar-height)); }
 
 /* Display font for headings / brand */
 .font-display,

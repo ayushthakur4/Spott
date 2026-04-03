@@ -30,8 +30,8 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="fixed top-0 w-full z-50 bg-[#0e0e0e]/60 backdrop-blur-[40px] border-b-[0.5px] border-white/10 shadow-[0_0_60px_rgba(122,175,255,0.04)] font-['Inter'] antialiased specular-edge">
-      <div className="flex items-center justify-between px-6 py-4 w-full">
+    <nav className="fixed top-0 w-full z-50 bg-[#0e0e0e]/60 backdrop-blur-[40px] border-b-[0.5px] border-white/10 shadow-[0_0_60px_rgba(122,175,255,0.04)] font-['Inter'] antialiased specular-edge h-[var(--navbar-height)]">
+      <div className="flex items-center justify-between px-6 h-full w-full">
         
         <div className="flex items-center gap-8">
           <Link to="/" className="text-2xl font-black tracking-tighter text-[var(--color-primary)]">
