@@ -1,4 +1,4 @@
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, LayersControl } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { useMemo } from 'react';
@@ -57,7 +57,8 @@ const MapPreview = ({ posts }) => {
     <div className="w-full h-full">
       {/* 
         The map container is the absolute background for Home.
-        It uses CartoDB Dark Matter tiles to fit the "Luminescent Navigator" HUD.
+        It uses CartoDB Dark Matter tiles by default, but allows 
+        switching to Satellite via the top-right control.
       */}
       <MapContainer 
         center={center} 
@@ -66,10 +67,21 @@ const MapPreview = ({ posts }) => {
         zoomControl={false} 
         className="w-full h-full relative z-0 bg-[#0e0e0e]"
       >
-        <TileLayer
-          attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
-          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-        />
+        <LayersControl position="topleft">
+          <LayersControl.BaseLayer checked name="Night Vision">
+            <TileLayer
+              attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
+              url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+            />
+          </LayersControl.BaseLayer>
+          <LayersControl.BaseLayer name="Satellite Uplink">
+            <TileLayer
+              attribution='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+              url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+            />
+          </LayersControl.BaseLayer>
+        </LayersControl>
+        
         {posts?.map((post) => (
           <Marker 
             key={post._id} 
