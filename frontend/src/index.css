@@ -238,3 +238,18 @@ h1, h2 {
   0%, 100% { opacity: 1; filter: drop-shadow(0 0 10px rgba(122, 175, 255, 0.4)); }
   50%      { opacity: 0.8; filter: drop-shadow(0 0 20px rgba(122, 175, 255, 0.6)); }
 }
+@keyframes scan-slow {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(400%); }
+}
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-scan-slow { animation: scan-slow 8s linear infinite; }
+.animate-spin-slow { animation: spin-slow 20s linear infinite; }
+
+.chip {
+  @apply rounded-full font-black tracking-widest uppercase transition-all duration-200 shadow-sm border-[0.5px];
+}
